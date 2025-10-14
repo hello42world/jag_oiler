@@ -4,10 +4,6 @@
 #include <Adafruit_SSD1306.h>
 
 #include "ui.h"
-
-//#include <WiFi.h>
-
-
 #include "motor.h"
 
 
@@ -25,6 +21,7 @@ MUI_XYT("BN", 64, 30, " Select Me ")
 */
 
 UI ui;
+Motor motor;
 
 
 void setup() {
@@ -32,9 +29,10 @@ void setup() {
 
   // Initialize serial communication
   Serial.begin(115200);  // Use a standard baud rate
-  Serial.print("Hello World!");
+  Serial.println("Hello World!");
 
-  ui.begin();
+  ui.setup();
+  motor.setup();
 
 #if 0
   pinMode(PIN_BTN_UP, INPUT_PULLUP);
@@ -52,11 +50,21 @@ void setup() {
 
 void mui_loop(void);
 
-
 void loop() {
+  int8_t event = ui.getButtonEvent();
+  if (event != 0) {
+    if (event == U8X8_MSG_GPIO_MENU_SELECT) {
+      Serial.println("Begin portion");
+      motor.beginPortion(17660);
+    }
+  }
+
+  if (motor.getState() == Motor::RUNNING_PORTION) {
+    ui.setProgress(motor.getPortionProgress());
+  }
+  
   ui.loop();
-  ui.testStep();
-  delay(100);
+  motor.loop();
 }
 
 

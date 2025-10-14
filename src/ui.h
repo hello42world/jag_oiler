@@ -11,6 +11,7 @@ class ProgressBar {
 public:
   ProgressBar(const std::string &label, int x, int y, int w, int h);
   void setProgress(int percent);
+  int getProgress() const;
   void draw(U8G2 &u8g2);
 
 private:
@@ -29,16 +30,18 @@ class UI {
   const int PIN_BTN_DOWN = 3;  
 public: 
   UI();
-  void begin();
+  void setup();
   void loop();
+  int8_t getButtonEvent();
+  
+  void setProgress(int percent);
 
-  void testStep();
 private:
 
 
   U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2_;
   //MUIU8G2 mui;
   ProgressBar progressBar_{"Progress", 10, 30, 108, 20};
-
   int testProgress_ = 0;
+  bool needsRedraw_ = true;
 };

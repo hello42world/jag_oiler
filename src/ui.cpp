@@ -17,6 +17,10 @@ void ProgressBar::setProgress(int percent) {
   }
 }
 
+int ProgressBar::getProgress() const {
+  return progress_;
+}
+
 void ProgressBar::draw(U8G2 &u8g2) {
   u8g2.setFont(u8g2_font_6x10_tf);
   u8g2.drawStr(x_, y_ - 2, label_.c_str());
@@ -39,7 +43,7 @@ UI::UI()
 {
 }
 
-void UI::begin() {
+void UI::setup() {
   pinMode(PIN_BTN_UP, INPUT_PULLUP);
   pinMode(PIN_BTN_SEL, INPUT_PULLUP);
   pinMode(PIN_BTN_DOWN, INPUT_PULLUP);
@@ -54,17 +58,22 @@ void UI::begin() {
 }
 
 void UI::loop() {
+  if (!needsRedraw_) {
+    return;
+  }
+  needsRedraw_ = false;
+
   u8g2_.clearBuffer();
- 
   progressBar_.draw(u8g2_);
-
-
   u8g2_.sendBuffer();
 }
 
-void UI::testStep() {
-  progressBar_.setProgress(testProgress_++);
-  if (testProgress_ > 100) {
-    testProgress_ = 0;
-  }
+int8_t UI::getButtonEvent() {
+  return u8g2_.getMenuEvent();
 }
+
+void UI::setProgress(int percent) {
+  needsRedraw_ = progressBar_.getProgress() != percent;
+  progressBar_.setProgress(percent);
+}
+
