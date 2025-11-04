@@ -29,10 +29,9 @@ void setup() {
 
   // Initialize serial communication
   Serial.begin(115200);  // Use a standard baud rate
-  Serial.println("Hello World!");
 
   ui.setup();
-  motor.setup();
+//  motor.setup();
 
 #if 0
   pinMode(PIN_BTN_UP, INPUT_PULLUP);
@@ -50,17 +49,22 @@ void setup() {
 
 void mui_loop(void);
 
+const int TURN = 1104; 
+
+static Motor::State g_lastState = Motor::IDLE;
 void loop() {
   int8_t event = ui.getButtonEvent();
   if (event != 0) {
     if (event == U8X8_MSG_GPIO_MENU_SELECT) {
       Serial.println("Begin portion");
-      motor.beginPortion(17660);
+      motor.beginPortion(TURN / 2);
+      g_lastState = motor.getState();
     }
   }
 
-  if (motor.getState() == Motor::RUNNING_PORTION) {
+  if (g_lastState == Motor::RUNNING_PORTION) {
     ui.setProgress(motor.getPortionProgress());
+    g_lastState = motor.getState();
   }
   
   ui.loop();

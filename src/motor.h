@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Arduino.h>
+#include <AccelStepper.h>
 
 
 class Motor {
@@ -10,15 +11,17 @@ public:
     RUNNING_PORTION
   };
 
-  void setup();
+
+  Motor();
+
+  // void setup();
   void loop();
   void beginPortion(int steps);
   int getPortionProgress() const; // 0..100
   State getState() const;
-private:
-  void advance();
 
-  State state_ = IDLE;
-  int stepsTotal_ = 0;
-  int stepsRemaining_ = 0;
+private:
+  AccelStepper stepper_;
+
+  State lastState_ = IDLE;
 };

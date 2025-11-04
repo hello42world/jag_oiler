@@ -65,6 +65,12 @@ void UI::loop() {
 
   u8g2_.clearBuffer();
   progressBar_.draw(u8g2_);
+
+  if (!statusStr_.empty()) {
+    u8g2_.setFont(u8g2_font_6x10_tf);
+    u8g2_.drawStr(10, 60, statusStr_.c_str());
+  }
+  
   u8g2_.sendBuffer();
 }
 
@@ -77,3 +83,13 @@ void UI::setProgress(int percent) {
   progressBar_.setProgress(percent);
 }
 
+void UI::printf(const char* format, ...) {
+  char buffer[128];
+  va_list args;
+  va_start(args, format);
+  vsnprintf(buffer, sizeof(buffer), format, args);
+  va_end(args);
+
+  statusStr_ = buffer;
+  needsRedraw_ = true;
+}

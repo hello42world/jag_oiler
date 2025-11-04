@@ -25,9 +25,9 @@ private:
 // UI
 //
 class UI {
-  const int PIN_BTN_UP = 1;  
-  const int PIN_BTN_SEL = 2;  
-  const int PIN_BTN_DOWN = 3;  
+  const int PIN_BTN_UP = 5;  
+  const int PIN_BTN_SEL = 4;  
+  const int PIN_BTN_DOWN = 6;  
 public: 
   UI();
   void setup();
@@ -36,12 +36,14 @@ public:
   
   void setProgress(int percent);
 
+  void printf(const char* format, ...);
 private:
 
 
   U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2_;
   //MUIU8G2 mui;
   ProgressBar progressBar_{"Progress", 10, 30, 108, 20};
+  std::string statusStr_;
   int testProgress_ = 0;
   bool needsRedraw_ = true;
 };
