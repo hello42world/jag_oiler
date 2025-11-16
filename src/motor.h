@@ -11,10 +11,8 @@ public:
     RUNNING_PORTION
   };
 
-
   Motor();
 
-  // void setup();
   void loop();
   void beginPortion(int steps);
   int getPortionProgress() const; // 0..100

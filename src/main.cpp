@@ -3,8 +3,7 @@
 #include <Adafruit_GFX.h>
 #include <Adafruit_SSD1306.h>
 
-#include "ui.h"
-#include "motor.h"
+#include "app.h"
 
 
 
@@ -20,8 +19,7 @@ MUI_XYT("BN", 64, 30, " Select Me ")
 ;
 */
 
-UI ui;
-Motor motor;
+App app;
 
 
 void setup() {
@@ -30,8 +28,7 @@ void setup() {
   // Initialize serial communication
   Serial.begin(115200);  // Use a standard baud rate
 
-  ui.setup();
-//  motor.setup();
+  app.setup();
 
 #if 0
   pinMode(PIN_BTN_UP, INPUT_PULLUP);
@@ -51,8 +48,9 @@ void mui_loop(void);
 
 const int TURN = 1104; 
 
-static Motor::State g_lastState = Motor::IDLE;
+// static Motor::State g_lastState = Motor::IDLE;
 void loop() {
+  /*
   int8_t event = ui.getButtonEvent();
   if (event != 0) {
     if (event == U8X8_MSG_GPIO_MENU_SELECT) {
@@ -69,6 +67,8 @@ void loop() {
   
   ui.loop();
   motor.loop();
+  */
+  app.loop();
 }
 
 
