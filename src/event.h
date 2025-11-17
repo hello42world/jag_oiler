@@ -6,10 +6,11 @@
 enum class EventID : uint8_t {
   FullRedraw,
   Button,
-  Progress
+  PortionProgress
 }; 
 
 struct Event {
+  Event() = delete;
   Event(EventID eventId) : id(eventId) {}
 
   const EventID id;

@@ -46,7 +46,7 @@ void setup() {
 
 void mui_loop(void);
 
-const int TURN = 1104; 
+
 
 // static Motor::State g_lastState = Motor::IDLE;
 void loop() {

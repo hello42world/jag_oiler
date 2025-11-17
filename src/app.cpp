@@ -10,14 +10,13 @@ constexpr uint8_t PIN_BTN_DOWN = 6;
 // App
 //
 App::App() 
-: u8g2_{U8G2_R2, U8X8_PIN_NONE, 9, 8}
-, eventBus_{}
-, motor_{}
-, dispensePage_(&u8g2_)
-, dispenseController_(&eventBus_, &motor_)
-
-, currentPage_(&dispensePage_)
-, currentController_(&dispenseController_)
+  : u8g2_{U8G2_R2, U8X8_PIN_NONE, 9, 8}
+  , eventBus_{}
+  , motor_{&eventBus_}
+  , dispensePage_(&u8g2_)
+  , dispenseController_(&eventBus_, &motor_)
+  , currentPage_(&dispensePage_)
+  , currentController_(&dispenseController_)
 {
 }
 
@@ -43,11 +42,25 @@ void App::loop() {
     eventBus_.publish(std::make_unique<ui::ButtonEvent>(btn));
   }
 
-  auto currentEvent = eventBus_.consume();
-  do {
+  motor_.loop();
+
+  for (;;) {  
+    auto currentEvent = eventBus_.consume();
     currentController_->loop(currentEvent.get());
+
+    if (!currentEvent) {
+      // Page has nothing to do if no event
+      break;
+    }
+
+    if (currentEvent->id == EventID::FullRedraw) {
+      u8g2_.clearBuffer();
+    }
     currentPage_->loop(currentEvent.get());
-  } while (currentEvent = eventBus_.consume());
+    if (currentEvent->id == EventID::FullRedraw) {
+      u8g2_.sendBuffer();
+    }
+  } 
 
 }
 

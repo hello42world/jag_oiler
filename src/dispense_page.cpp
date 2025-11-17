@@ -3,19 +3,14 @@
 #include "ui/events.h"
 
 DispensePage::DispensePage(U8G2* u8g2)
-  : Page(u8g2) {
+  : Page(u8g2)
+  , progressBar_(u8g2, "Dispensing...", 10, 15, 108, 10) {
 }
 
 void DispensePage::loop(const Event* event) {
   if (event->id == EventID::FullRedraw) {
-    progressBar_.draw(*u8g2_);    
-  } else if (event->id == EventID::Progress) {
-    const ProgressEvent* progressEvent = static_cast<const ProgressEvent*>(event);
-    bool updated = progressBar_.getProgress() != progressEvent->progressPercent;
-    if (updated) {
-      progressBar_.setProgress(progressEvent->progressPercent);
-      progressBar_.draw(*u8g2_);
-      progressBar_.updateDisplay(*u8g2_);
-    }
+    progressBar_.draw();    
+  } else if (event->id == EventID::PortionProgress) {
+    progressBar_.setProgress(static_cast<const PortionProgressEvent*>(event)->progressPercent);
   }
 }

@@ -8,5 +8,5 @@ public:
 
   void loop(const Event* event) override;
 private:
-  ui::ProgressBar progressBar_{"Dispensing...", 10, 30, 108, 20};
+  ui::ProgressBar progressBar_;
 };
