@@ -7,9 +7,9 @@ DispensePage::DispensePage(U8G2* u8g2)
 }
 
 void DispensePage::loop(const Event* event) {
-  if (dynamic_cast<const ui::FullRedrawEvent*>(event) != nullptr) {
+  if (event->id == EventID::FullRedraw) {
     progressBar_.draw(*u8g2_);    
-  } else if (dynamic_cast<const ProgressEvent*>(event) != nullptr) {
+  } else if (event->id == EventID::Progress) {
     const ProgressEvent* progressEvent = static_cast<const ProgressEvent*>(event);
     bool updated = progressBar_.getProgress() != progressEvent->progressPercent;
     if (updated) {

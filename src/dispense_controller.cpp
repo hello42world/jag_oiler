@@ -19,9 +19,9 @@ DispenseController::DispenseController(EventBus* eventBus, Motor* motor)
 {}
 
 void DispenseController::loop(const Event* event) {
-  if (dynamic_cast<const ui::ButtonEvent*>(event) != nullptr) {
+  if (event->id == EventID::Button) {
     const ui::ButtonEvent* buttonEvent = static_cast<const ui::ButtonEvent*>(event);
-    if (buttonEvent->buttonPin == U8X8_MSG_GPIO_MENU_SELECT) {
+    if (buttonEvent->button == U8X8_MSG_GPIO_MENU_SELECT) {
       Serial.println("Select pressed");
     }
   }

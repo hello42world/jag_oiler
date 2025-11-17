@@ -2,7 +2,18 @@
 #include <memory>
 #include <queue>
 
+
+enum class EventID : uint8_t {
+  FullRedraw,
+  Button,
+  Progress
+}; 
+
 struct Event {
+  Event(EventID eventId) : id(eventId) {}
+
+  const EventID id;
+
   virtual ~Event() = default;
 };
 
