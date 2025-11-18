@@ -29,45 +29,12 @@ void setup() {
   Serial.begin(115200);  // Use a standard baud rate
 
   app.setup();
-
-#if 0
-  pinMode(PIN_BTN_UP, INPUT_PULLUP);
-
-  u8g2.begin(/* menu_select_pin= */ PIN_BTN_SEL, 
-    /* menu_next_pin= */ U8X8_PIN_NONE, /* menu_prev_pin= */ U8X8_PIN_NONE, 
-    /* menu_up_pin= */ PIN_BTN_UP, /* menu_down_pin= */ PIN_BTN_DOWN, 
-    /* menu_home_pin= */ U8X8_PIN_NONE);  
-  mui.begin(u8g2, fds_data, muif_list, sizeof(muif_list)/sizeof(muif_t));
-  mui.gotoForm(/* form_id= */ 1, /* initial_cursor_position= */ 0);
-#endif
-
-
 }
 
 void mui_loop(void);
 
 
-
-// static Motor::State g_lastState = Motor::IDLE;
 void loop() {
-  /*
-  int8_t event = ui.getButtonEvent();
-  if (event != 0) {
-    if (event == U8X8_MSG_GPIO_MENU_SELECT) {
-      Serial.println("Begin portion");
-      motor.beginPortion(TURN / 2);
-      g_lastState = motor.getState();
-    }
-  }
-
-  if (g_lastState == Motor::RUNNING_PORTION) {
-    ui.setProgress(motor.getPortionProgress());
-    g_lastState = motor.getState();
-  }
-  
-  ui.loop();
-  motor.loop();
-  */
   app.loop();
 }
 

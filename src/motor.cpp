@@ -6,7 +6,7 @@
 #define PIN_BIN1 2
 #define PIN_BIN2 3
 
-#define PIN_EN 10
+// #define PIN_EN 10
 
 const int progressStep = 10;
 
@@ -20,7 +20,7 @@ Motor::Motor(EventBus* eventBus)
   stepper_.setAcceleration(15000);  
   stepper_.setSpeed(300);
   stepper_.disableOutputs();
-  stepper_.setEnablePin(PIN_EN);
+  // stepper_.setEnablePin(PIN_EN);
 }
 
 void Motor::beginPortion(int steps) {

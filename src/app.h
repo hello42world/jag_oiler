@@ -7,6 +7,7 @@
 
 #include "dispense_page.h"
 #include "dispense_controller.h"
+#include "menu_page.h"
 
 
 class App {
@@ -15,6 +16,7 @@ public:
   void setup();
   void loop();
   int8_t getButtonPress();
+  int8_t getButtonPress2();
 
 private:
 
@@ -26,6 +28,7 @@ private:
   //MUIU8G2 mui;
   DispensePage dispensePage_;
   DispenseController dispenseController_;
+  MenuPage menuPage_;
 
   Page* currentPage_;
   Controller* currentController_;
