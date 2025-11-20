@@ -1,13 +1,16 @@
 #pragma once
 #include "event.h"
-#include <U8g2lib.h>
 
-class Page {
+
+class Controller {
 public:
-  Page(U8G2* u8g2) : u8g2_(u8g2) {}
-  
+  Controller(EventBus* eventBus);
+
   virtual void loop() {};
   virtual bool handleEvent(const Event* event) { return false; }
+
 protected:
-  U8G2 *u8g2_;
+  void publishEvent(std::unique_ptr<Event> event);
+private:
+  EventBus* eventBus_;
 };

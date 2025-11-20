@@ -7,7 +7,7 @@ class MenuPage : public Page {
 public:
   MenuPage(U8G2* u8g2, const Settings& settings);
 
-  void loop(const Event* event) override;
+  bool handleEvent(const Event* event) override;
 private:
   void muiRedraw();
 

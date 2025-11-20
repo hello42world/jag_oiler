@@ -6,7 +6,7 @@ class DispensePage : public Page {
 public:
   DispensePage(U8G2* u8g2);
 
-  void loop(const Event* event) override;
+  bool handleEvent(const Event* event) override;
 private:
   ui::ProgressBar progressBar_;
 };

@@ -52,28 +52,29 @@ void App::loop() {
   int8_t btn = getButtonPress2();
   if (btn != 0) {
     eventBus_.publish(std::make_unique<ui::ButtonEvent>(btn));
-    // Serial.printf("Button pressed: %d\n", btn);
   }
 
   motor_.loop();
 
   for (;;) {  
     auto currentEvent = eventBus_.consume();
-    if (currentController_) {
-      currentController_->loop(currentEvent.get());
-    }
-
     if (!currentEvent) {
-      // Page has nothing to do if no event
       break;
     }
-
-    if (currentEvent->id == EventID::FullRedraw) {
-      u8g2_.clearBuffer();
+    if (currentController_) {
+      if (currentController_->handleEvent(currentEvent.get())) {
+        continue;
+      }
     }
-    currentPage_->loop(currentEvent.get());
-    if (currentEvent->id == EventID::FullRedraw) {
-      u8g2_.sendBuffer();
+
+    if (currentPage_) {
+      if (currentEvent->id == EventID::FullRedraw) {
+        u8g2_.clearBuffer();
+      }
+      currentPage_->handleEvent(currentEvent.get());
+      if (currentEvent->id == EventID::FullRedraw) {
+        u8g2_.sendBuffer();
+      }
     }
   } 
 

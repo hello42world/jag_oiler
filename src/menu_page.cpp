@@ -10,9 +10,9 @@ MUI_FORM(0)
 XMUI_MENU_HEADER("Menu")
 
 MUI_DATA("GP", 
-    MUI_10 "Prime pump|"
-    MUI_2 "Settings"
-    )
+  MUI_10 "Prime pump|"
+  MUI_2 "Settings"
+)
 
 XMUI_MENU_BTN0("GC") 
 XMUI_MENU_BTN1("GC")
@@ -62,7 +62,7 @@ MenuPage::MenuPage(U8G2* u8g2, const Settings& settings)
   mui_.gotoForm(/* form_id= */ 0, /* initial_cursor_position= */ 0);
 }
 
-void MenuPage::loop(const Event* event) {
+bool MenuPage::handleEvent(const Event* event) {
   if (event->id == EventID::FullRedraw) {
     muiRedraw();    
   } else if (event->id == EventID::Button) {
@@ -84,7 +84,10 @@ void MenuPage::loop(const Event* event) {
         break;
     }
     muiRedraw();
+  } else {
+    return false;
   }
+  return true;
 }
 
 void MenuPage::muiRedraw() {
