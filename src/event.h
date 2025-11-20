@@ -6,7 +6,8 @@
 enum class EventID : uint8_t {
   FullRedraw,
   Button,
-  PortionProgress
+  PortionProgress,
+  SettingsChanged
 }; 
 
 struct Event {
@@ -14,8 +15,6 @@ struct Event {
   Event(EventID eventId) : id(eventId) {}
 
   const EventID id;
-
-  virtual ~Event() = default;
 };
 
 

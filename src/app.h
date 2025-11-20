@@ -26,6 +26,8 @@ private:
 
 
   //MUIU8G2 mui;
+  Settings settings_ = {2};
+
   DispensePage dispensePage_;
   DispenseController dispenseController_;
   MenuPage menuPage_;

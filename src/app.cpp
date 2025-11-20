@@ -17,7 +17,7 @@ App::App()
   , motor_{&eventBus_}
   , dispensePage_(&u8g2_)
   , dispenseController_(&eventBus_, &motor_)
-  , menuPage_(&u8g2_)
+  , menuPage_(&u8g2_, settings_)
   //, currentPage_(&dispensePage_)
   //, currentController_(&dispenseController_)
   , currentPage_(&menuPage_)

@@ -2,38 +2,64 @@
 #include "ui/events.h"
 
 
-uint8_t number_input = 2;       // variable where the user can input a number between 0 and 9
-uint8_t exit_code = 0;   
+#define MAX_DROP_SIZE 20
 
-muif_t muif_list[] = {
-  /* normal text style */
-  MUIF_U8G2_FONT_STYLE(0, u8g2_font_helvR08_tr),
-  
-  /* Leave the menu system */
-  MUIF_VARIABLE("LV",&exit_code, mui_u8g2_btn_exit_wm_fi),
-  
-  /* input for a number between 0 to 9 */
-  MUIF_U8G2_U8_MIN_MAX("IN", &number_input, 0, 9, mui_u8g2_u8_min_max_wm_mse_pi),
-  
-  /* MUI_LABEL is used to place fixed text on the screeen */
-  MUIF_LABEL(mui_u8g2_draw_text)
-};
+fds_t fds_data[] = 
+/* top level main menu */
+MUI_FORM(0)
+XMUI_MENU_HEADER("Menu")
 
+MUI_DATA("GP", 
+    MUI_10 "Prime pump|"
+    MUI_2 "Settings"
+    )
 
-fds_t fds_data[] MUI_PROGMEM = 
-  MUI_FORM(1)
-  MUI_STYLE(0)
-  MUI_LABEL(5,12, "Countdown Time")
-  MUI_LABEL(5,30, "Seconds:")
-  MUI_XY("IN",60, 30)
-  MUI_XYT("LV",64, 59, " OK ")
+XMUI_MENU_BTN0("GC") 
+XMUI_MENU_BTN1("GC")
+
+//----
+
+//MUI_FORM(1)
+//XMUI_MENU_HEADER("Settings")
+//XMUI_MENU_BTN0("ID")
+//XMUI_MENU_BTN1("ID")
+
+//----
+
+MUI_FORM(2)
+XMUI_MENU_HEADER("Settings")
+MUI_LABEL(5, 27, "Drop size (1-20):")
+MUI_XY("IN", 100, 27)
+// MUI_XYT("LV", 64, 59, " OK ")
+
 ;
 
 
-MenuPage::MenuPage(U8G2* u8g2) 
-  : Page(u8g2) {
-  mui_.begin(*u8g2, fds_data, muif_list, sizeof(muif_list)/sizeof(muif_t));
-  mui_.gotoForm(/* form_id= */ 1, /* initial_cursor_position= */ 0);
+
+MenuPage::MenuPage(U8G2* u8g2, const Settings& settings) 
+  : Page(u8g2)
+  , settings_(settings)
+  , stDropSize_{&settings_.quarterOfRotationPerDrop, 1, MAX_DROP_SIZE}
+   {
+
+  muifList_ = {
+    MUIF_U8G2_FONT_STYLE(0, u8g2_font_helvR08_tr),  
+    MUIF_U8G2_FONT_STYLE(1, u8g2_font_helvB08_tr),
+
+    MUIF_RO("HR", ui::xmui_hrule),
+    MUIF_U8G2_LABEL(),
+    MUIF_RO("GP",mui_u8g2_goto_data),
+    MUIF_BUTTON("GC", mui_u8g2_goto_form_w1_pi),
+
+    // XMUIF_DYNAMIC_MENU("ID", settingsMenu_),
+
+    {'I', 'N', MUIF_CFLAG_IS_CURSOR_SELECTABLE, 0, &stDropSize_, mui_u8g2_u8_min_max_wm_mud_pi},
+    // MUIF_VARIABLE("LV", nullptr, mui_u8g2_btn_exit_wm_fi)
+  };
+
+
+  mui_.begin(*u8g2, fds_data, muifList_.data(), muifList_.size());
+  mui_.gotoForm(/* form_id= */ 0, /* initial_cursor_position= */ 0);
 }
 
 void MenuPage::loop(const Event* event) {
@@ -50,6 +76,9 @@ void MenuPage::loop(const Event* event) {
         break;
       case U8X8_MSG_GPIO_MENU_PREV:
         mui_.prevField();
+        break;
+      case U8X8_MSG_GPIO_MENU_HOME:
+        mui_.restoreForm();
         break;
       default:
         break;
