@@ -5,7 +5,7 @@
 
 class MenuPage : public Page {
 public:
-  MenuPage(U8G2* u8g2, const Settings& settings);
+  MenuPage(U8G2* u8g2, EventBus* eventBus, const Settings& settings);
 
   bool handleEvent(const Event* event) override;
 private:

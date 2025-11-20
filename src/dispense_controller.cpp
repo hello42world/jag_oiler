@@ -12,12 +12,11 @@ DispenseController::DispenseController(EventBus* eventBus, Motor* motor)
 const int TURN = 1108; 
 
 bool DispenseController::handleEvent(const Event* event) {
-  if (event->id == EventID::Button) {
-    const ui::ButtonEvent* buttonEvent = static_cast<const ui::ButtonEvent*>(event);
-    if (buttonEvent->button == U8X8_MSG_GPIO_MENU_SELECT) {
+  if (event->id == EventID::Button && 
+      static_cast<const ui::ButtonEvent*>(event)->button == U8X8_MSG_GPIO_MENU_HOME) {
       motor_->beginPortion(TURN / 2);
-    }
-    return true;
+  } else {
+    return false;
   }
   return false;
 }

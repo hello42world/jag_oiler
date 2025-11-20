@@ -36,8 +36,8 @@ MUI_XY("IN", 100, 27)
 
 
 
-MenuPage::MenuPage(U8G2* u8g2, const Settings& settings) 
-  : Page(u8g2)
+MenuPage::MenuPage(U8G2* u8g2, EventBus* eventBus, const Settings& settings) 
+  : Page(u8g2, eventBus)
   , settings_(settings)
   , stDropSize_{&settings_.quarterOfRotationPerDrop, 1, MAX_DROP_SIZE}
    {
@@ -78,7 +78,11 @@ bool MenuPage::handleEvent(const Event* event) {
         mui_.prevField();
         break;
       case U8X8_MSG_GPIO_MENU_HOME:
-        mui_.restoreForm();
+        if (mui_.getCurrentFormId() == 0) {
+          publishEvent(std::make_unique<PageClosedEvent>(this));
+        } else {
+          mui_.restoreForm();
+        }
         break;
       default:
         break;

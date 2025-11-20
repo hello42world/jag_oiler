@@ -15,13 +15,12 @@ App::App()
   : u8g2_{U8G2_R2, U8X8_PIN_NONE, 9, 8}
   , eventBus_{}
   , motor_{&eventBus_}
-  , dispensePage_(&u8g2_)
+  , dispensePage_(&u8g2_, &eventBus_)
   , dispenseController_(&eventBus_, &motor_)
-  , menuPage_(&u8g2_, settings_)
-  //, currentPage_(&dispensePage_)
-  //, currentController_(&dispenseController_)
-  , currentPage_(&menuPage_)
-  , currentController_(nullptr)
+  , menuPage_(&u8g2_, &eventBus_, settings_)
+
+  , currentPage_(&dispensePage_)
+  , currentController_(&dispenseController_)
 {
 }
 
@@ -61,6 +60,11 @@ void App::loop() {
     if (!currentEvent) {
       break;
     }
+
+    if (handleEvent(currentEvent.get())) {
+      continue;
+    }
+
     if (currentController_) {
       if (currentController_->handleEvent(currentEvent.get())) {
         continue;
@@ -79,6 +83,27 @@ void App::loop() {
   } 
 
 }
+
+bool App::handleEvent(const Event* event) {
+  if (event->id == EventID::PageClosed 
+      && static_cast<const PageClosedEvent*>(event)->page == &dispensePage_) {
+      activatePage(&menuPage_, nullptr);
+  } else if (event->id == EventID::PageClosed 
+      && static_cast<const PageClosedEvent*>(event)->page == &menuPage_) {
+      activatePage(&dispensePage_, &dispenseController_);
+  } else {
+    return false;
+  }
+
+  return true;
+}
+
+void App::activatePage(Page* page, Controller* controller) {
+  currentPage_ = page;
+  currentController_ = controller;
+  eventBus_.publish(std::make_unique<ui::FullRedrawEvent>());
+}
+
 
 int8_t App::getButtonPress() {
   return u8g2_.getMenuEvent();

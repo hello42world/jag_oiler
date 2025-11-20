@@ -19,5 +19,4 @@ struct ButtonEvent : public Event {
 };
 
 
-
 } // namespace ui
