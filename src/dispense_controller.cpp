@@ -9,7 +9,7 @@ DispenseController::DispenseController(EventBus* eventBus, Motor* motor)
   , motor_(motor) 
 {}
 
-const int TURN = 1108; 
+const int TURN = 1106; 
 
 bool DispenseController::handleEvent(const Event* event) {
   if (event->id == EventID::Button && 

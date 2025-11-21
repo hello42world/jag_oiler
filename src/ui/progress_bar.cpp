@@ -42,9 +42,18 @@ void ProgressBar::setProgress(int8_t percent) {
   }
   if (oldProgress != progress_) {
 
-    drawTheBar();
+    drawBar();
     updateDisplayArea(u8g2_, x_ + 2, y_ + 2, w_ - 4, h_ - 4);
   }
+}
+
+void ProgressBar::setLabel(const std::string &label) {
+  if (label_ == label) {
+    return;
+  }
+  label_ = label;
+  drawLabel();
+  updateDisplayArea(u8g2_, x_, y_ - 8, w_, 8);
 }
 
 int8_t ProgressBar::getProgress() const {
@@ -52,25 +61,29 @@ int8_t ProgressBar::getProgress() const {
 }
 
 void ProgressBar::draw() {
-  if (!label_.empty()) {
-    u8g2_->setFont(u8g2_font_6x10_tf);
-    u8g2_->drawStr(x_, y_ - 2, label_.c_str());
-  }
+  drawLabel();
 
   u8g2_->drawFrame(x_, y_, w_, h_);
 
-  drawTheBar();
+  drawBar();
 }
 
-void ProgressBar::drawTheBar() {
+void ProgressBar::drawBar() {
   int16_t filledWidth = (w_ - 4) * progress_ / 100;
   
-
   u8g2_->setDrawColor(1);
   u8g2_->drawBox(x_ + 2, y_ + 2, filledWidth, h_ - 4);
   u8g2_->setDrawColor(0);
   u8g2_->drawBox(x_ + 2 + filledWidth, y_ + 2, (w_ - 4) - filledWidth, h_ - 4);
   u8g2_->setDrawColor(1);
+}
+
+void ProgressBar::drawLabel() {
+  u8g2_->setFont(u8g2_font_helvR08_tr);
+  u8g2_->setDrawColor(0);
+  u8g2_->drawBox(x_, y_ - 10, w_, 10);
+  u8g2_->setDrawColor(1);
+  u8g2_->drawStr(x_, y_ - 2, label_.c_str());
 }
 
 } // namespace ui

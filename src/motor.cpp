@@ -40,7 +40,7 @@ void Motor::loop() {
     if (getState() == IDLE) {
       stepper_.disableOutputs();
       stepper_.setCurrentPosition(0);
-      eventBus_->publish(std::make_unique<PortionProgressEvent>(0));
+      eventBus_->publish(std::make_unique<PortionProgressEvent>(100));
     }
   }
 
