@@ -9,7 +9,8 @@ bool Page::handleEvent(const Event* event) {
   return false;
 }
 
-PageClosedEvent::PageClosedEvent(Page* page)
+PageClosedEvent::PageClosedEvent(Page* page, int8_t result_)
   : Event(EventID::PageClosed)
-  , page(page) {
+  , page(page)
+  , result(result_) {
 }

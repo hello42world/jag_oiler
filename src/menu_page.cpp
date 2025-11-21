@@ -70,7 +70,7 @@ bool MenuPage::handleEvent(const Event* event) {
     const ui::ButtonEvent* buttonEvent = static_cast<const ui::ButtonEvent*>(event);
     switch (buttonEvent->button) {
       case U8X8_MSG_GPIO_MENU_SELECT:
-        mui_.sendSelect();
+        handleBtnSelect();
         break;
       case U8X8_MSG_GPIO_MENU_NEXT:
         mui_.nextField();
@@ -79,17 +79,7 @@ bool MenuPage::handleEvent(const Event* event) {
         mui_.prevField();
         break;
       case U8X8_MSG_GPIO_MENU_HOME:
-        if (mui_.getCurrentFormId() == 0) {
-          publishEvent(std::make_unique<PageClosedEvent>(this));
-        } else {
-          if (mui_.getCurrentFormId() == 2) {
-            publishEvent(std::make_unique<SettingsChangedEvent>(settings_));
-          }
-          mui_.restoreForm();
-        }
-
-        break;
-      default:
+        handleBtnHome();
         break;
     }
     muiRedraw();
@@ -104,4 +94,23 @@ void MenuPage::muiRedraw() {
   do {
     mui_.draw();
   } while( u8g2_->nextPage() );
+}
+
+void MenuPage::handleBtnHome() {
+  if (mui_.getCurrentFormId() == 0) {
+    publishEvent(std::make_unique<PageClosedEvent>(this));
+  } else {
+    if (mui_.getCurrentFormId() == 2) {
+      publishEvent(std::make_unique<SettingsChangedEvent>(settings_));
+    }
+    mui_.restoreForm();
+  }
+}
+
+void MenuPage::handleBtnSelect() {
+  if (mui_.getCurrentFormId() == 0 && mui_.getCurrentCursorFocusPosition() == 0) {
+    publishEvent(std::make_unique<PageClosedEvent>(this, RES_PRIME_PUMP));
+    return;
+  }
+  mui_.sendSelect();
 }

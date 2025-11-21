@@ -17,6 +17,7 @@ private:
 };
 
 struct PageClosedEvent : public Event {
-  PageClosedEvent(Page* page);
+  PageClosedEvent(Page* page, int8_t result_ = 0);
   Page* page;
+  int8_t result;
 };

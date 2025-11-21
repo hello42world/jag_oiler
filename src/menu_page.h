@@ -5,11 +5,16 @@
 
 class MenuPage : public Page {
 public:
+  constexpr static int8_t RES_DONE = 0;
+  constexpr static int8_t RES_PRIME_PUMP = 1;
+
   MenuPage(U8G2* u8g2, EventBus* eventBus, const Settings& settings);
 
   bool handleEvent(const Event* event) override;
 private:
   void muiRedraw();
+  void handleBtnHome();
+  void handleBtnSelect();
 
   MUIU8G2 mui_;
   std::vector<muif_struct> muifList_;
