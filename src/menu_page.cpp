@@ -1,4 +1,5 @@
 #include "menu_page.h"
+#include "menu_events.h"
 #include "ui/events.h"
 
 
@@ -39,7 +40,7 @@ MUI_XY("IN", 100, 27)
 MenuPage::MenuPage(U8G2* u8g2, EventBus* eventBus, const Settings& settings) 
   : Page(u8g2, eventBus)
   , settings_(settings)
-  , stDropSize_{&settings_.quarterOfRotationPerDrop, 1, MAX_DROP_SIZE}
+  , stDropSize_{&settings_.dropSize, 1, MAX_DROP_SIZE}
    {
 
   muifList_ = {
@@ -81,8 +82,12 @@ bool MenuPage::handleEvent(const Event* event) {
         if (mui_.getCurrentFormId() == 0) {
           publishEvent(std::make_unique<PageClosedEvent>(this));
         } else {
+          if (mui_.getCurrentFormId() == 2) {
+            publishEvent(std::make_unique<SettingsChangedEvent>(settings_));
+          }
           mui_.restoreForm();
         }
+
         break;
       default:
         break;

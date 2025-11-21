@@ -23,7 +23,7 @@ Motor::Motor(EventBus* eventBus)
   // stepper_.setEnablePin(PIN_EN);
 }
 
-void Motor::beginPortion(int steps) {
+void Motor::beginPortion(int32_t steps) {
   if (getState() == RUNNING_PORTION) {
     return;
   }

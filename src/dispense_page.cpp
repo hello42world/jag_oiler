@@ -20,9 +20,6 @@ bool DispensePage::handleEvent(const Event* event) {
       progressBar_.setLabel("Ready");
       progressBar_.setProgress(0);
     }
-
-    Serial.printf("Portion progress: %d%%\n", progress);
-
   } else if (event->id == EventID::Button 
     && static_cast<const ui::ButtonEvent*>(event)->button == U8X8_MSG_GPIO_MENU_SELECT) {
     publishEvent(std::make_unique<PageClosedEvent>(this));

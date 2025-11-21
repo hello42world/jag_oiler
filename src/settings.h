@@ -3,5 +3,5 @@
 
 struct Settings
 {
-  int8_t quarterOfRotationPerDrop;
+  int8_t dropSize;
 };

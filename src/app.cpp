@@ -15,13 +15,28 @@ App::App()
   : u8g2_{U8G2_R2, U8X8_PIN_NONE, 9, 8}
   , eventBus_{}
   , motor_{&eventBus_}
-  , dispensePage_(&u8g2_, &eventBus_)
-  , dispenseController_(&eventBus_, &motor_)
-  , menuPage_(&u8g2_, &eventBus_, settings_)
-
-  , currentPage_(&dispensePage_)
-  , currentController_(&dispenseController_)
+  , currentPage_{nullptr}
+  , currentController_{nullptr}
 {
+  // Initialize pages
+  pages_[PAGE_DISPENSE] = new DispensePage(&u8g2_, &eventBus_);
+  pages_[PAGE_MENU] = new MenuPage(&u8g2_, &eventBus_, settings_);
+  
+  // Initialize controllers
+  controllers_[PAGE_DISPENSE] = new DispenseController(&eventBus_, &motor_, settings_.dropSize);
+  controllers_[PAGE_MENU] = nullptr;
+  
+  // Set initial page
+  currentPage_ = pages_[PAGE_DISPENSE];
+  currentController_ = controllers_[PAGE_DISPENSE];
+}
+
+App::~App() {
+  // Clean up dynamically allocated pages and controllers
+  for (int8_t i = 0; i < NUM_PAGES; i++) {
+    delete pages_[i];
+    delete controllers_[i];
+  }
 }
 
 void App::setup() {
@@ -65,12 +80,16 @@ void App::loop() {
       continue;
     }
 
+    if (handleControllers(currentEvent.get())) {
+      continue;
+    }
+/*
     if (currentController_) {
       if (currentController_->handleEvent(currentEvent.get())) {
         continue;
       }
     }
-
+      */
     if (currentPage_) {
       if (currentEvent->id == EventID::FullRedraw) {
         u8g2_.clearBuffer();
@@ -81,16 +100,31 @@ void App::loop() {
       }
     }
   } 
+}
 
+bool App::handleControllers(const Event* event) {
+  if (event->id == EventID::Button) {
+    // Button event is only sent to the current controller
+    if (currentController_) {
+      return currentController_->handleEvent(event);
+    }
+  } else {
+    for (int8_t i = 0; i < NUM_PAGES; i++) {
+      if (controllers_[i] && controllers_[i]->handleEvent(event)) {
+        return true;
+      }
+    }
+  }
+  return false; 
 }
 
 bool App::handleEvent(const Event* event) {
   if (event->id == EventID::PageClosed 
-      && static_cast<const PageClosedEvent*>(event)->page == &dispensePage_) {
-      activatePage(&menuPage_, nullptr);
+      && static_cast<const PageClosedEvent*>(event)->page == pages_[PAGE_DISPENSE]) {
+      activatePage(PAGE_MENU);
   } else if (event->id == EventID::PageClosed 
-      && static_cast<const PageClosedEvent*>(event)->page == &menuPage_) {
-      activatePage(&dispensePage_, &dispenseController_);
+      && static_cast<const PageClosedEvent*>(event)->page == pages_[PAGE_MENU]) {
+      activatePage(PAGE_DISPENSE);
   } else {
     return false;
   }
@@ -98,9 +132,9 @@ bool App::handleEvent(const Event* event) {
   return true;
 }
 
-void App::activatePage(Page* page, Controller* controller) {
-  currentPage_ = page;
-  currentController_ = controller;
+void App::activatePage(int8_t pageIndex) {
+  currentPage_ = pages_[pageIndex];
+  currentController_ = controllers_[pageIndex];
   eventBus_.publish(std::make_unique<ui::FullRedrawEvent>());
 }
 

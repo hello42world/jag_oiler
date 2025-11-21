@@ -16,7 +16,7 @@ public:
   Motor(EventBus* eventBus);
 
   void loop();
-  void beginPortion(int steps);
+  void beginPortion(int32_t steps);
   int16_t getPortionProgress() const; // 0..100
   State getState() const;
 
