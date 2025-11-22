@@ -1,6 +1,8 @@
 #include "dispense_page.h"
 #include "motor_events.h"
 #include "ui/events.h"
+#include "ui/xmui.h"
+#include "battery.h"
 
 DispensePage::DispensePage(U8G2* u8g2, EventBus* eventBus)
   : Page(u8g2, eventBus)
@@ -17,7 +19,9 @@ bool DispensePage::handleEvent(const Event* event) {
     if (progress == 0) {
       progressBar_.setLabel("Dispensing...");
     } else if (progress == 100) {
-      progressBar_.setLabel("Ready");
+      // progressBar_.setLabel("Ready");
+      auto voltage = batteryReadVoltage();
+      progressBar_.setLabel(ui::sp("Ready [ bat=%d.%2d ]", voltage / 1000, voltage % 1000 / 10));
       progressBar_.setProgress(0);
     }
   } else if (event->id == EventID::Button 

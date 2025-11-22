@@ -6,6 +6,7 @@
 #include "dispense_controller.h"
 #include "menu_page.h"
 #include "prime_pump_page.h"
+#include "battery.h"
 
 
 constexpr uint8_t PIN_BTN_SEL = 5;
@@ -43,20 +44,17 @@ void App::setup() {
   pinMode(PIN_BTN_SEL, INPUT_PULLUP);
   pinMode(PIN_BTN_NEXT, INPUT_PULLUP);
   pinMode(PIN_BTN_HOME, INPUT_PULLUP);
-# if 0
-  u8g2_.begin(/* menu_select_pin= */ PIN_BTN_SEL, 
-    /* menu_next_pin= */ PIN_BTN_NEXT, /* menu_prev_pin= */ PIN_BTN_PREV, 
-    /* menu_up_pin= */ U8X8_PIN_NONE, /* menu_down_pin= */U8X8_PIN_NONE, 
-    /* menu_home_pin= */ PIN_BTN_HOME);     
-# endif
-    u8g2_.begin(
-      /* menu_select_pin = */ U8X8_PIN_NONE,
-      /* menu_next_pin   = */ U8X8_PIN_NONE,
-      /* menu_prev_pin   = */ U8X8_PIN_NONE,
-      /* menu_up_pin     = */ U8X8_PIN_NONE,
-      /* menu_down_pin   = */ U8X8_PIN_NONE,
-      /* menu_home_pin   = */ U8X8_PIN_NONE
-    );
+
+  u8g2_.begin(
+    /* menu_select_pin = */ U8X8_PIN_NONE,
+    /* menu_next_pin   = */ U8X8_PIN_NONE,
+    /* menu_prev_pin   = */ U8X8_PIN_NONE,
+    /* menu_up_pin     = */ U8X8_PIN_NONE,
+    /* menu_down_pin   = */ U8X8_PIN_NONE,
+    /* menu_home_pin   = */ U8X8_PIN_NONE
+  );
+
+  batteryInit();
 
   eventBus_.publish(std::make_unique<ui::FullRedrawEvent>());
 }
