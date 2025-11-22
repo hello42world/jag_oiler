@@ -2,6 +2,11 @@
 #include "ui/consts.h"
 #include "ui/events.h"
 
+#include "dispense_page.h"
+#include "dispense_controller.h"
+#include "menu_page.h"
+#include "prime_pump_page.h"
+
 
 constexpr uint8_t PIN_BTN_SEL = 5;
 constexpr uint8_t PIN_BTN_PREV = 10;
@@ -21,22 +26,16 @@ App::App()
   // Initialize pages
   pages_[PAGE_DISPENSE] = new DispensePage(&u8g2_, &eventBus_);
   pages_[PAGE_MENU] = new MenuPage(&u8g2_, &eventBus_, settings_);
+  pages_[PAGE_PRIME_PUMP] = new PrimePumpPage(&u8g2_, &eventBus_);
+
   
   // Initialize controllers
   controllers_[PAGE_DISPENSE] = new DispenseController(&eventBus_, &motor_, settings_.dropSize);
   controllers_[PAGE_MENU] = nullptr;
-  
+  controllers_[PAGE_PRIME_PUMP] = nullptr;
   // Set initial page
   currentPage_ = pages_[PAGE_DISPENSE];
   currentController_ = controllers_[PAGE_DISPENSE];
-}
-
-App::~App() {
-  // Clean up dynamically allocated pages and controllers
-  for (int8_t i = 0; i < NUM_PAGES; i++) {
-    delete pages_[i];
-    delete controllers_[i];
-  }
 }
 
 void App::setup() {
@@ -80,16 +79,14 @@ void App::loop() {
       continue;
     }
 
-    if (handleControllers(currentEvent.get())) {
+    if (sendToMotor(currentEvent.get())) {
       continue;
     }
-/*
-    if (currentController_) {
-      if (currentController_->handleEvent(currentEvent.get())) {
-        continue;
-      }
+
+    if (sendToControllers(currentEvent.get())) {
+      continue;
     }
-      */
+
     if (currentPage_) {
       if (currentEvent->id == EventID::FullRedraw) {
         u8g2_.clearBuffer();
@@ -102,7 +99,30 @@ void App::loop() {
   } 
 }
 
-bool App::handleControllers(const Event* event) {
+
+bool App::handleEvent(const Event* event) {
+
+  if (event->id == EventID::PageClosed) {
+  
+    PageClosedEvent const* pageClosedEvent = static_cast<const PageClosedEvent*>(event);
+    if (pageClosedEvent->page == pages_[PAGE_DISPENSE]) {
+      activatePage(PAGE_MENU);
+    } else if (pageClosedEvent->page == pages_[PAGE_MENU]) {
+      if (pageClosedEvent->result == MenuPage::RES_DONE) { 
+        activatePage(PAGE_DISPENSE);
+      } else if (pageClosedEvent->result == MenuPage::RES_PRIME_PUMP) {
+        activatePage(PAGE_PRIME_PUMP);
+      }
+    } else if (pageClosedEvent->page == pages_[PAGE_PRIME_PUMP]) {
+      activatePage(PAGE_MENU);
+    }
+    return true;
+  }
+
+  return false;
+}
+
+bool App::sendToControllers(const Event* event) {
   if (event->id == EventID::Button) {
     // Button event is only sent to the current controller
     if (currentController_) {
@@ -118,18 +138,11 @@ bool App::handleControllers(const Event* event) {
   return false; 
 }
 
-bool App::handleEvent(const Event* event) {
-  if (event->id == EventID::PageClosed 
-      && static_cast<const PageClosedEvent*>(event)->page == pages_[PAGE_DISPENSE]) {
-      activatePage(PAGE_MENU);
-  } else if (event->id == EventID::PageClosed 
-      && static_cast<const PageClosedEvent*>(event)->page == pages_[PAGE_MENU]) {
-      activatePage(PAGE_DISPENSE);
-  } else {
-    return false;
+bool App::sendToMotor(const Event* event) {
+  if (event->id >= EventID::MotorStartCommand && event->id <= EventID::MotorStopCommand) {
+    return motor_.handleEvent(event);
   }
-
-  return true;
+  return false;
 }
 
 void App::activatePage(int8_t pageIndex) {

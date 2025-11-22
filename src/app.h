@@ -5,25 +5,27 @@
 #include <string>
 #include "motor.h"
 
-#include "dispense_page.h"
-#include "dispense_controller.h"
-#include "menu_page.h"
-
+#include "page.h"
+#include "controller.h"
+#include "settings.h"
 
 class App {
-  constexpr static int8_t NUM_PAGES = 2;
+  constexpr static int8_t NUM_PAGES = 3;
   constexpr static int8_t PAGE_DISPENSE = 0;
   constexpr static int8_t PAGE_MENU = 1;
+  constexpr static int8_t PAGE_PRIME_PUMP = 2;
 public: 
   App();
-  ~App();
+
   void setup();
   void loop();
 
 
 private:
-  bool handleControllers(const Event* event);
   bool handleEvent(const Event* event);
+  bool sendToControllers(const Event* event);
+  bool sendToMotor(const Event* event);
+
   void activatePage(int8_t pageIndex);
 
   int8_t getButtonPress();

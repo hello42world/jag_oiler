@@ -1,5 +1,5 @@
 #include "motor.h" 
-#include "dispense_events.h"
+#include "motor_events.h"
 
 #define PIN_AIN1 0
 #define PIN_AIN2 1
@@ -29,7 +29,7 @@ void Motor::beginPortion(int32_t steps) {
   }
   stepper_.enableOutputs();
   stepper_.move(steps);
-  eventBus_->publish(std::make_unique<PortionProgressEvent>(0));
+  eventBus_->publish(std::make_unique<MotorProgressEvent>(0, steps > 0));
   lastProgress_ = 0;
 }
 
@@ -40,7 +40,7 @@ void Motor::loop() {
     if (getState() == IDLE) {
       stepper_.disableOutputs();
       stepper_.setCurrentPosition(0);
-      eventBus_->publish(std::make_unique<PortionProgressEvent>(100));
+      eventBus_->publish(std::make_unique<MotorProgressEvent>(100, false));
     }
   }
 
@@ -48,11 +48,24 @@ void Motor::loop() {
     auto progress = getPortionProgress();
     if (progress / progressStep != lastProgress_ / progressStep) {
       lastProgress_ = progress;
-      eventBus_->publish(std::make_unique<PortionProgressEvent>(progress));
+      eventBus_->publish(std::make_unique<MotorProgressEvent>(progress, stepper_.targetPosition() > 0));
     }
   }
 
   lastState_ = getState();
+}
+
+bool Motor::handleEvent(const Event* event) {
+  if (event->id == EventID::MotorStartCommand) {
+    const MotorStartCommandEvent* motorEvent = static_cast<const MotorStartCommandEvent*>(event);
+    beginPortion(motorEvent->stepsToMove);
+  } else if (event->id == EventID::MotorStopCommand) {
+    stepper_.stop();
+    eventBus_->publish(std::make_unique<MotorProgressEvent>(100, false));
+  } else {
+    return false;
+  }
+  return true;
 }
 
 int16_t Motor::getPortionProgress() const {

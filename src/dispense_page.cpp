@@ -1,5 +1,5 @@
 #include "dispense_page.h"
-#include "dispense_events.h"
+#include "motor_events.h"
 #include "ui/events.h"
 
 DispensePage::DispensePage(U8G2* u8g2, EventBus* eventBus)
@@ -10,8 +10,8 @@ DispensePage::DispensePage(U8G2* u8g2, EventBus* eventBus)
 bool DispensePage::handleEvent(const Event* event) {
   if (event->id == EventID::FullRedraw) {
     progressBar_.draw();    
-  } else if (event->id == EventID::PortionProgress) {
-    auto progress = static_cast<const PortionProgressEvent*>(event)->progressPercent;
+  } else if (event->id == EventID::MotorProgress) {
+    auto progress = static_cast<const MotorProgressEvent*>(event)->progressPercent;
     progressBar_.setProgress(progress);
     
     if (progress == 0) {

@@ -5,8 +5,6 @@
 namespace ui
 {
 
-
-
 struct FullRedrawEvent : public Event {
   FullRedrawEvent() : Event(EventID::FullRedraw) {}
 };

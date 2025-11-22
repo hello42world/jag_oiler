@@ -6,9 +6,11 @@
 enum class EventID : uint8_t {
   FullRedraw,
   Button,
-  PortionProgress,
   SettingsChanged,
-  PageClosed
+  PageClosed,
+  MotorProgress,
+  MotorStartCommand,
+  MotorStopCommand
 }; 
 
 struct Event {

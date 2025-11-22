@@ -1,5 +1,5 @@
 #include "dispense_controller.h"
-#include "dispense_events.h"
+#include "motor_events.h"
 #include "menu_events.h"
 #include "ui/events.h"
 #include "U8g2lib.h"
@@ -11,12 +11,10 @@ DispenseController::DispenseController(EventBus* eventBus, Motor* motor, int8_t 
   , dropSize_(dropSize)
 {}
 
-const int TURN = 1106; 
-
 bool DispenseController::handleEvent(const Event* event) {
-  if (event->id == EventID::Button && 
-      static_cast<const ui::ButtonEvent*>(event)->button == U8X8_MSG_GPIO_MENU_HOME) {
-      int32_t steps = dropSize_ * TURN / 4;
+  if (event->id == EventID::Button 
+      && static_cast<const ui::ButtonEvent*>(event)->button == U8X8_MSG_GPIO_MENU_HOME) {
+      int32_t steps = dropSize_ * Motor::TURN_STEPS / 4;
       motor_->beginPortion(steps);
       Serial.printf("DispenseController: Dispensing %d drops (%d steps)\n", dropSize_, steps);
   } else if (event->id == EventID::SettingsChanged) {
