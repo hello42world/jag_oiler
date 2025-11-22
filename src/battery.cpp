@@ -27,7 +27,7 @@ bool batteryInit() {
   
   // Configure channel with ADC_ATTEN_DB_6 for 0-2200mV range (suitable for max 2.1V)
   adc_oneshot_chan_cfg_t config = {
-    .atten = ADC_ATTEN_DB_6,
+    .atten = ADC_ATTEN_DB_12,
     .bitwidth = ADC_BITWIDTH_12,
   };
   
@@ -43,7 +43,7 @@ bool batteryInit() {
   
   adc_cali_curve_fitting_config_t cali_config_curve = {
     .unit_id = ADC_UNIT_1,
-    .atten = ADC_ATTEN_DB_6,
+    .atten = ADC_ATTEN_DB_12,
     .bitwidth = ADC_BITWIDTH_12,
   };
   
@@ -91,16 +91,14 @@ int32_t batteryReadVoltage() {
   if (adc1_cali_handle) {
     int voltage_mv = 0;
     if (adc_cali_raw_to_voltage(adc1_cali_handle, adcRaw, &voltage_mv) == ESP_OK) {
-      // Apply voltage divider factor: 2.05x
-      // voltage_mv * 205 / 100
-      return (voltage_mv * 205) / 100;
+      return (voltage_mv * 200) / 100;
     }
   }
   
   // Fallback: convert raw value to voltage manually
   // ADC_ATTEN_DB_6 gives 0-2200mV range for 12-bit (0-4095)
   // voltage_mv = (adcRaw * 2200) / 4095
-  // Then apply voltage divider: * 205 / 100
+  // Then apply voltage divider: * 200 / 100
   int32_t voltage_mv = (adcRaw * 2200) / 4095;
-  return (voltage_mv * 205) / 100;
+  return (voltage_mv * 200) / 100;
 }
