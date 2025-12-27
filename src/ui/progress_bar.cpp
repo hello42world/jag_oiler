@@ -11,14 +11,17 @@ void updateDisplayArea(U8G2* u8g2, uint16_t x, uint16_t y, uint16_t w, uint16_t 
     uint16_t sw = u8g2->getWidth();
     uint16_t sh = u8g2->getHeight();
 
-    uint16_t x_end = x + w;
-    uint16_t y_end = y + h;
+    uint16_t x_transformed = sw - x - w;
+    uint16_t y_transformed = sh - y - h;
+
+    uint16_t x_end = x_transformed + w;
+    uint16_t y_end = y_transformed + h;
 
     uint16_t x_prime = sw - x_end;
     uint16_t y_prime = sh - y_end;
 
-    uint16_t x_prime_end = sw - x;
-    uint16_t y_prime_end = sh - y;
+    uint16_t x_prime_end = sw - x_transformed;
+    uint16_t y_prime_end = sh - y_transformed;
 
     uint8_t x_tile = x_prime / 8;
     uint8_t y_tile = y_prime / 8;
@@ -28,6 +31,7 @@ void updateDisplayArea(U8G2* u8g2, uint16_t x, uint16_t y, uint16_t w, uint16_t 
 
     uint8_t w_tile = x_tile_end - x_tile;
     uint8_t h_tile = y_tile_end - y_tile;
+
     u8g2->updateDisplayArea(x_tile, y_tile, w_tile, h_tile);
 }
 

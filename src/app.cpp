@@ -9,16 +9,16 @@
 #include "battery.h"
 
 
-constexpr uint8_t PIN_BTN_SEL = 5;
-constexpr uint8_t PIN_BTN_PREV = 10;
-constexpr uint8_t PIN_BTN_NEXT = 6;
-constexpr uint8_t PIN_BTN_HOME = 7;
+constexpr uint8_t PIN_BTN_SEL  = 3;
+constexpr uint8_t PIN_BTN_PREV = 4;
+constexpr uint8_t PIN_BTN_NEXT = 2;
+constexpr uint8_t PIN_BTN_HOME = 1;
 
 //
 // App
 //
 App::App() 
-  : u8g2_{U8G2_R2, U8X8_PIN_NONE, 9, 8}
+  : u8g2_{U8G2_R0, U8X8_PIN_NONE, 9, 8}
   , eventBus_{}
   , motor_{&eventBus_}
   , currentPage_{nullptr}
@@ -31,7 +31,7 @@ App::App()
 
   
   // Initialize controllers
-  controllers_[PAGE_DISPENSE] = new DispenseController(&eventBus_, &motor_, settings_.dropSize);
+  controllers_[PAGE_DISPENSE] = new DispenseController(&eventBus_, settings_.dropSize);
   controllers_[PAGE_MENU] = nullptr;
   controllers_[PAGE_PRIME_PUMP] = nullptr;
   // Set initial page

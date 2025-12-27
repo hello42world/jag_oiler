@@ -8,13 +8,21 @@ static adc_oneshot_unit_handle_t adc1_handle = nullptr;
 static adc_cali_handle_t adc1_cali_handle = nullptr;
 static bool initialized = false;
 
+/*
+  GPIOX → ADC1_CHANNEL_X 
+  X is 0 to 4 
+*/
+
+const adc_channel_t BATTERY_ADC_CHANNEL = ADC_CHANNEL_0; // GPIO0 on ESP32-C3
+
+
 bool batteryInit() {
   // If already initialized, return success
   if (initialized && adc1_handle != nullptr) {
     return true;
   }
   
-  // Configure ADC1 for GPIO5 (ADC1_CHANNEL_4 on ESP32-C3)
+  // Configure ADC1 for GPIO0 (ADC1_CHANNEL_0 on ESP32-C3)
   adc_oneshot_unit_init_cfg_t init_config = {
     .unit_id = ADC_UNIT_1,
   };
@@ -31,7 +39,7 @@ bool batteryInit() {
     .bitwidth = ADC_BITWIDTH_12,
   };
   
-  ret = adc_oneshot_config_channel(adc1_handle, ADC_CHANNEL_4, &config);
+  ret = adc_oneshot_config_channel(adc1_handle, BATTERY_ADC_CHANNEL, &config);
   if (ret != ESP_OK) {
     Serial.printf("ADC channel config failed: 0x%x\n", ret);
     return false;
@@ -64,7 +72,7 @@ bool batteryInit() {
   
   // Verify ADC is working by reading a test value
   int testRead = 0;
-  ret = adc_oneshot_read(adc1_handle, ADC_CHANNEL_4, &testRead);
+  ret = adc_oneshot_read(adc1_handle, BATTERY_ADC_CHANNEL, &testRead);
   if (ret != ESP_OK) {
     Serial.printf("ADC test read failed: 0x%x\n", ret);
     return false;
@@ -83,7 +91,7 @@ int32_t batteryReadVoltage() {
   
   // Read raw ADC value (0-4095 for 12-bit)
   int adcRaw = 0;
-  if (adc_oneshot_read(adc1_handle, ADC_CHANNEL_4, &adcRaw) != ESP_OK) {
+  if (adc_oneshot_read(adc1_handle, ADC_CHANNEL_0, &adcRaw) != ESP_OK) {
     return -1;
   }
   

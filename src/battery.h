@@ -2,7 +2,7 @@
 
 #include <cstdint>
 
-// Initialize ADC for battery voltage reading on GPIO5
+// Initialize ADC for battery voltage reading on GPIO0
 // Returns true on success, false on failure
 bool batteryInit();
 

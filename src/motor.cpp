@@ -1,10 +1,10 @@
 #include "motor.h" 
 #include "motor_events.h"
 
-#define PIN_AIN1 0
-#define PIN_AIN2 1
-#define PIN_BIN1 2
-#define PIN_BIN2 3
+#define PIN_AIN1 5
+#define PIN_AIN2 6
+#define PIN_BIN1 7
+#define PIN_BIN2 10
 
 // #define PIN_EN 10
 
