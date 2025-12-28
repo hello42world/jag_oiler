@@ -45,6 +45,8 @@ void App::setup() {
   pinMode(PIN_BTN_NEXT, INPUT_PULLUP);
   pinMode(PIN_BTN_HOME, INPUT_PULLUP);
 
+  // We don't use the default u8g2 key handling because it fires when the button is _released_.
+  // getButtonPress fires on press.
   u8g2_.begin(
     /* menu_select_pin = */ U8X8_PIN_NONE,
     /* menu_next_pin   = */ U8X8_PIN_NONE,
@@ -60,7 +62,7 @@ void App::setup() {
 }
 
 void App::loop() {
-  int8_t btn = getButtonPress2();
+  int8_t btn = getButtonPress();
   if (btn != 0) {
     eventBus_.publish(std::make_unique<ui::ButtonEvent>(btn));
   }
@@ -151,11 +153,8 @@ void App::activatePage(int8_t pageIndex) {
 }
 
 
-int8_t App::getButtonPress() {
-  return u8g2_.getMenuEvent();
-}
 
-int8_t App::getButtonPress2() {
+int8_t App::getButtonPress() {
   static unsigned long lastDebounceTime = 0;
   const uint8_t pins[] = {PIN_BTN_SEL, PIN_BTN_PREV, PIN_BTN_NEXT, PIN_BTN_HOME};
   static constexpr uint8_t numbtns = sizeof(pins) / sizeof(pins[0]);
