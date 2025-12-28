@@ -30,7 +30,8 @@ void ProgressBar::setLabel(const std::string &label) {
   }
   label_ = label;
   drawLabel();
-  xmuiUpdateDisplayArea(u8g2_, x_, y_ - 8, w_, 8);
+  int8_t fontHeight = u8g2_->getMaxCharHeight();
+  xmuiUpdateDisplayArea(u8g2_, x_, y_ - fontHeight, w_, fontHeight);
 }
 
 int8_t ProgressBar::getProgress() const {
@@ -56,10 +57,10 @@ void ProgressBar::drawBar() {
 }
 
 void ProgressBar::drawLabel() {
-  constexpr int16_t labelHeight = 15;
   u8g2_->setFont(XMUI_DEFAULT_FONT);
+  int8_t fontHeight = u8g2_->getMaxCharHeight();
   u8g2_->setDrawColor(0);
-  u8g2_->drawBox(x_, y_ - labelHeight, w_, labelHeight);
+  u8g2_->drawBox(x_, y_ - fontHeight, w_, fontHeight);
   u8g2_->setDrawColor(1);
   u8g2_->drawStr(x_, y_ - 4, label_.c_str());
 }

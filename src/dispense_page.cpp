@@ -6,7 +6,7 @@
 
 DispensePage::DispensePage(U8G2* u8g2, EventBus* eventBus)
   : Page(u8g2, eventBus)
-  , progressBar_(u8g2, "Ready", 10, 15, 108, 15) {
+  , progressBar_(u8g2, "Ready", 10, 25, 108, 15) {
 }
 
 bool DispensePage::handleEvent(const Event* event) {

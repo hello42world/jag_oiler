@@ -1,11 +1,13 @@
 #include "prime_pump_page.h"
 #include "ui/events.h"
+#include "ui/xmui.h"
 #include "motor.h"
 #include "motor_events.h"
 
 PrimePumpPage::PrimePumpPage(U8G2* u8g2, EventBus* eventBus)
   : Page(u8g2, eventBus)
   , state_(State::Ready)
+  , buttonHint_(u8g2, "Flush", "Stop", "Prime")
 {
 }
 
@@ -28,10 +30,10 @@ bool PrimePumpPage::handleEvent(const Event* event) {
     auto progressEvt = static_cast<const MotorProgressEvent*>(event);
     if (progressEvt->progressPercent == 0) {
       state_ = progressEvt->forward ? State::Priming : State::Flushing;
-      draw();
+      publishEvent(std::make_unique<ui::FullRedrawEvent>());
     } else if (progressEvt->progressPercent == 100) {
       state_ = State::Ready;
-      draw();
+      publishEvent(std::make_unique<ui::FullRedrawEvent>());
     }
   } else {
     return false;
@@ -41,8 +43,6 @@ bool PrimePumpPage::handleEvent(const Event* event) {
 
 
 void PrimePumpPage::draw() {
-  u8g2_->clearBuffer();
-  u8g2_->setFont(u8g2_font_helvR10_tr);
   if (state_ == State::Ready) {
     printInCenter("Ready");
   } else if (state_ == State::Priming) {
@@ -50,11 +50,11 @@ void PrimePumpPage::draw() {
   } else if (state_ == State::Flushing) {
     printInCenter("Flushing...");
   }
-  u8g2_->sendBuffer();
+  buttonHint_.draw();
 }
 
 void PrimePumpPage::printInCenter(const char* str) {
-  u8g2_->setFont(u8g2_font_helvR10_tr);
+  u8g2_->setFont(XMUI_BIG_FONT);
   u8g2_uint_t x = (u8g2_->getWidth() - u8g2_->getStrWidth(str)) / 2;
   u8g2_->drawStr(x, (u8g2_->getHeight() + 10) / 2, str);
 }

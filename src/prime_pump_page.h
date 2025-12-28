@@ -1,5 +1,6 @@
 #pragma once
 #include "page.h"
+#include "ui/button_hint.h"
 
 class PrimePumpPage : public Page {
   enum class State {
@@ -17,4 +18,5 @@ private:
   void printInCenter(const char* str);
 
   State state_;
+  ui::ButtonHint buttonHint_;
 };

@@ -12,7 +12,7 @@ public:
 
   bool handleEvent(const Event* event) override;
 private:
-  void muiRedraw();
+  void draw();
   void handleBtnHome();
   void handleBtnSelect();
 

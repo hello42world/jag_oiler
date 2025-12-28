@@ -10,8 +10,7 @@
 
 #define XMUI_HEADER_FONT  u8g2_font_helvB10_tr
 #define XMUI_DEFAULT_FONT u8g2_font_helvR10_tr
-#define XMUI_BIG_FONT     u8g2_font_helvR12_tr
-
+#define XMUI_BIG_FONT     u8g2_font_helvR14_tr
 
 
 // Menu header macro

@@ -47,7 +47,7 @@ XMUI_MENU_BTN0("GC")
 MUI_FORM(3)
 XMUI_MENU_HEADER("Drop size (1-20)")
 MUI_STYLE(2)
-MUI_XY("I0", 50, 41)
+MUI_XY("I0", 55, 35)
 
 
 
@@ -59,7 +59,7 @@ MenuPage::MenuPage(U8G2* u8g2, EventBus* eventBus, const Settings& settings)
   : Page(u8g2, eventBus)
   , settings_(settings)
   , stDropSize_{&settings_.dropSize, 1, MAX_DROP_SIZE}
-   {
+{
 
   muifList_ = {
     MUIF_U8G2_FONT_STYLE(0, XMUI_DEFAULT_FONT),  
@@ -84,7 +84,7 @@ bool MenuPage::handleEvent(const Event* event) {
     mui_.gotoForm(/* form_id= */ 0, /* initial_cursor_position= */ 0);
   }
   else if (event->id == EventID::FullRedraw) {
-    muiRedraw();    
+    draw();    
   } else if (event->id == EventID::Button) {
     const ui::ButtonEvent* buttonEvent = static_cast<const ui::ButtonEvent*>(event);
     switch (buttonEvent->button) {
@@ -101,24 +101,20 @@ bool MenuPage::handleEvent(const Event* event) {
         handleBtnHome();
         break;
     }
-    muiRedraw();
+    publishEvent(std::make_unique<ui::FullRedrawEvent>());
   } else {
     return false;
   }
   return true;
 }
 
-void MenuPage::muiRedraw() {
-  u8g2_->firstPage();
-  do {
-    mui_.draw();
-  } while( u8g2_->nextPage() );
+void MenuPage::draw() {
+  mui_.draw();
 }
 
 void MenuPage::handleBtnHome() {
   if (mui_.getCurrentFormId() == FORM_MAIN_MENU) {
     publishEvent(std::make_unique<PageClosedEvent>(this));
-    // mui_.leaveForm();
   } else {
     if (mui_.getCurrentFormId() == FORM_DROP_SIZE_MENU) {
       publishEvent(std::make_unique<SettingsChangedEvent>(settings_));
