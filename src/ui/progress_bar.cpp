@@ -56,11 +56,12 @@ void ProgressBar::drawBar() {
 }
 
 void ProgressBar::drawLabel() {
-  u8g2_->setFont(u8g2_font_helvR08_tr);
+  constexpr int16_t labelHeight = 15;
+  u8g2_->setFont(XMUI_DEFAULT_FONT);
   u8g2_->setDrawColor(0);
-  u8g2_->drawBox(x_, y_ - 10, w_, 10);
+  u8g2_->drawBox(x_, y_ - labelHeight, w_, labelHeight);
   u8g2_->setDrawColor(1);
-  u8g2_->drawStr(x_, y_ - 2, label_.c_str());
+  u8g2_->drawStr(x_, y_ - 4, label_.c_str());
 }
 
 } // namespace ui

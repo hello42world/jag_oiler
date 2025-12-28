@@ -28,8 +28,8 @@ XMUI_MENU_BTN1("GC")
 
 MUI_FORM(2)
 XMUI_MENU_HEADER("Settings")
-MUI_LABEL(5, 27, "Drop size (1-20):")
-MUI_XY("IN", 100, 27)
+MUI_LABEL(3, 31, "Drop size(1-20):")
+MUI_XY("IN", 106, 31)
 // MUI_XYT("LV", 64, 59, " OK ")
 
 ;
@@ -43,16 +43,15 @@ MenuPage::MenuPage(U8G2* u8g2, EventBus* eventBus, const Settings& settings)
    {
 
   muifList_ = {
-    MUIF_U8G2_FONT_STYLE(0, u8g2_font_helvR08_tr),  
-    MUIF_U8G2_FONT_STYLE(1, u8g2_font_helvB08_tr),
+    MUIF_U8G2_FONT_STYLE(0, XMUI_DEFAULT_FONT),  
+    MUIF_U8G2_FONT_STYLE(1, XMUI_HEADER_FONT),
 
     MUIF_RO("HR", ui::xmui_hrule),
     MUIF_U8G2_LABEL(),
-    MUIF_RO("GP",mui_u8g2_goto_data),
+    MUIF_RO("GP", mui_u8g2_goto_data),
     MUIF_BUTTON("GC", mui_u8g2_goto_form_w1_pi),
 
     // XMUIF_DYNAMIC_MENU("ID", settingsMenu_),
-
     XMUIF_INT_VAR("IN", &stDropSize_),
   };
 

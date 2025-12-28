@@ -8,17 +8,20 @@
 #include <string>
 #include <cstdint>
 
+#define XMUI_HEADER_FONT u8g2_font_helvB10_tr
+#define XMUI_DEFAULT_FONT u8g2_font_helvR10_tr
+
 
 // Menu header macro
 #define XMUI_MENU_HEADER(caption) \
   MUI_STYLE(1) \
-  MUI_LABEL(5,10, caption) \
-  MUI_XY("HR", 0, 13) \
+  MUI_LABEL(3, 12, caption) \
+  MUI_XY("HR", 0, 15) \
   MUI_STYLE(0)
 
 // Menu button position macros
-#define XMUI_MENU_BTN0(id) MUI_XYA(id, 5, 25, 0)
-#define XMUI_MENU_BTN1(id) MUI_XYA(id, 5, 37, 1)
+#define XMUI_MENU_BTN0(id) MUI_XYA(id, 3, 31, 0)
+#define XMUI_MENU_BTN1(id) MUI_XYA(id, 3, 49, 1)
 
 #define XMUIF_DYNAMIC_MENU(id, menu) \
   { id[0], id[1], MUIF_CFLAG_IS_CURSOR_SELECTABLE, 0, &menu.listDef, mui_u8g2_u16_list_goto_w1_pi }
