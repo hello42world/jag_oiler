@@ -146,6 +146,7 @@ bool App::sendToMotor(const Event* event) {
 void App::activatePage(int8_t pageIndex) {
   currentPage_ = pages_[pageIndex];
   currentController_ = controllers_[pageIndex];
+  eventBus_.publish(std::make_unique<PageActivatedEvent>());
   eventBus_.publish(std::make_unique<ui::FullRedrawEvent>());
 }
 

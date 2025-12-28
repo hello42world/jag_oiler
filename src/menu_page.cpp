@@ -5,13 +5,18 @@
 
 #define MAX_DROP_SIZE 20
 
+#define FORM_MAIN_MENU        0
+#define FORM_SETTINGS_MENU    1
+#define FORM_DROP_SIZE_MENU   3
+
+
 fds_t fds_data[] = 
 MUI_FORM(0)
 XMUI_MENU_HEADER("Menu")
 
 MUI_DATA("GP", 
   MUI_10 "Prime pump|"
-  MUI_2 "Settings"
+  MUI_1 "Settings"
 )
 
 XMUI_MENU_BTN0("GC") 
@@ -19,20 +24,34 @@ XMUI_MENU_BTN1("GC")
 
 //----
 
-//MUI_FORM(1)
-//XMUI_MENU_HEADER("Settings")
-//XMUI_MENU_BTN0("ID")
+MUI_FORM(1)
+XMUI_MENU_HEADER("Settings")
+
+MUI_DATA("GP", 
+  MUI_3 "Drop size"
+)
+XMUI_MENU_BTN0("GC")
+
 //XMUI_MENU_BTN1("ID")
 
 //----
 
-MUI_FORM(2)
-XMUI_MENU_HEADER("Settings")
-MUI_LABEL(3, 31, "Drop size(1-20):")
-MUI_XY("IN", 106, 31)
-// MUI_XYT("LV", 64, 59, " OK ")
+// MUI_FORM(2)
+// XMUI_MENU_HEADER("Settings")
+// MUI_LABEL(3, 31, "Drop size(1-20):")
+// MUI_XY("IN", 106, 31)
 
-;
+
+//----
+
+MUI_FORM(3)
+XMUI_MENU_HEADER("Drop size (1-20)")
+MUI_STYLE(2)
+MUI_XY("I0", 50, 41)
+
+
+
+;  // fds_data
 
 
 
@@ -45,6 +64,7 @@ MenuPage::MenuPage(U8G2* u8g2, EventBus* eventBus, const Settings& settings)
   muifList_ = {
     MUIF_U8G2_FONT_STYLE(0, XMUI_DEFAULT_FONT),  
     MUIF_U8G2_FONT_STYLE(1, XMUI_HEADER_FONT),
+    MUIF_U8G2_FONT_STYLE(2, XMUI_BIG_FONT),
 
     MUIF_RO("HR", ui::xmui_hrule),
     MUIF_U8G2_LABEL(),
@@ -52,16 +72,18 @@ MenuPage::MenuPage(U8G2* u8g2, EventBus* eventBus, const Settings& settings)
     MUIF_BUTTON("GC", mui_u8g2_goto_form_w1_pi),
 
     // XMUIF_DYNAMIC_MENU("ID", settingsMenu_),
-    XMUIF_INT_VAR("IN", &stDropSize_),
+    XMUIF_INT_VAR("I0", &stDropSize_),
   };
 
 
   mui_.begin(*u8g2, fds_data, muifList_.data(), muifList_.size());
-  mui_.gotoForm(/* form_id= */ 0, /* initial_cursor_position= */ 0);
 }
 
 bool MenuPage::handleEvent(const Event* event) {
-  if (event->id == EventID::FullRedraw) {
+  if (event->id == EventID::PageActivated) {
+    mui_.gotoForm(/* form_id= */ 0, /* initial_cursor_position= */ 0);
+  }
+  else if (event->id == EventID::FullRedraw) {
     muiRedraw();    
   } else if (event->id == EventID::Button) {
     const ui::ButtonEvent* buttonEvent = static_cast<const ui::ButtonEvent*>(event);
@@ -94,10 +116,11 @@ void MenuPage::muiRedraw() {
 }
 
 void MenuPage::handleBtnHome() {
-  if (mui_.getCurrentFormId() == 0) {
+  if (mui_.getCurrentFormId() == FORM_MAIN_MENU) {
     publishEvent(std::make_unique<PageClosedEvent>(this));
+    // mui_.leaveForm();
   } else {
-    if (mui_.getCurrentFormId() == 2) {
+    if (mui_.getCurrentFormId() == FORM_DROP_SIZE_MENU) {
       publishEvent(std::make_unique<SettingsChangedEvent>(settings_));
     }
     mui_.restoreForm();
@@ -105,9 +128,13 @@ void MenuPage::handleBtnHome() {
 }
 
 void MenuPage::handleBtnSelect() {
-  if (mui_.getCurrentFormId() == 0 && mui_.getCurrentCursorFocusPosition() == 0) {
+  if (mui_.getCurrentFormId() == FORM_MAIN_MENU && mui_.getCurrentCursorFocusPosition() == 0) {
     publishEvent(std::make_unique<PageClosedEvent>(this, RES_PRIME_PUMP));
     return;
   }
   mui_.sendSelect();
+  if (mui_.getCurrentFormId() == FORM_DROP_SIZE_MENU) {
+    // Enter edit mode immediately.
+    mui_.sendSelect();
+  }
 }

@@ -7,6 +7,7 @@ enum class EventID : uint8_t {
   FullRedraw,
   Button,
   SettingsChanged,
+  PageActivated,
   PageClosed,
   MotorProgress,
   MotorStartCommand,

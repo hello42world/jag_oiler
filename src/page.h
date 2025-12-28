@@ -16,6 +16,10 @@ private:
   EventBus *eventBus_;
 };
 
+struct PageActivatedEvent : public Event {
+  PageActivatedEvent();
+};
+
 struct PageClosedEvent : public Event {
   PageClosedEvent(Page* page, int8_t result_ = 0);
   Page* page;
