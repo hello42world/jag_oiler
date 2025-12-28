@@ -34,6 +34,9 @@ uint8_t xmui_hrule(mui_t *ui, uint8_t msg);
 // String printing helper
 std::string sp(const char* format, ...);
 
+// Update display area (partial refresh)
+void xmuiUpdateDisplayArea(U8G2* u8g2, uint16_t x, uint16_t y, uint16_t w, uint16_t h);
+
 // Dynamic menu structure
 struct XMuiMenu {
   XMuiMenu();

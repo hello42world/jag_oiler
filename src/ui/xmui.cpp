@@ -42,4 +42,20 @@ const char* XMuiMenu::getItem(void *data, uint16_t idx) {
   return menu->items[idx].c_str();
 }
 
+void xmuiUpdateDisplayArea(U8G2* u8g2, uint16_t x, uint16_t y, uint16_t w, uint16_t h) {
+    uint16_t x_prime_end = x + w;
+    uint16_t y_prime_end = y + h;
+
+    uint8_t x_tile = x / 8;
+    uint8_t y_tile = y / 8;
+
+    uint8_t x_tile_end = (x_prime_end + 7) / 8;
+    uint8_t y_tile_end = (y_prime_end + 7) / 8;
+
+    uint8_t w_tile = x_tile_end - x_tile;
+    uint8_t h_tile = y_tile_end - y_tile;
+
+    u8g2->updateDisplayArea(x_tile, y_tile, w_tile, h_tile);
+}
+
 } // namespace ui
