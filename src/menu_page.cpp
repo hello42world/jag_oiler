@@ -6,7 +6,6 @@
 #define MAX_DROP_SIZE 20
 
 fds_t fds_data[] = 
-/* top level main menu */
 MUI_FORM(0)
 XMUI_MENU_HEADER("Menu")
 
@@ -54,8 +53,7 @@ MenuPage::MenuPage(U8G2* u8g2, EventBus* eventBus, const Settings& settings)
 
     // XMUIF_DYNAMIC_MENU("ID", settingsMenu_),
 
-    {'I', 'N', MUIF_CFLAG_IS_CURSOR_SELECTABLE, 0, &stDropSize_, mui_u8g2_u8_min_max_wm_mud_pi},
-    // MUIF_VARIABLE("LV", nullptr, mui_u8g2_btn_exit_wm_fi)
+    XMUIF_INT_VAR("IN", &stDropSize_),
   };
 
 

@@ -23,6 +23,9 @@
 #define XMUIF_DYNAMIC_MENU(id, menu) \
   { id[0], id[1], MUIF_CFLAG_IS_CURSOR_SELECTABLE, 0, &menu.listDef, mui_u8g2_u16_list_goto_w1_pi }
 
+#define XMUIF_INT_VAR(id, varstruct) \
+  {id[0], id[1], MUIF_CFLAG_IS_CURSOR_SELECTABLE, 0, varstruct, mui_u8g2_u8_min_max_wm_mud_pi}
+
 namespace ui {
 
 // Custom horizontal rule function
