@@ -24,6 +24,7 @@ App::App()
   , currentPage_{nullptr}
   , currentController_{nullptr}
   , batteryIndicator_{&u8g2_}
+  , lastRedrawTime_{0}
 {
   // Initialize pages
   pages_[PAGE_DISPENSE] = new DispensePage(&u8g2_, &eventBus_);
@@ -63,6 +64,8 @@ void App::setup() {
 }
 
 void App::loop() {
+  checkRedrawTimer();
+
   int8_t btn = getButtonPress();
   if (btn != 0) {
     eventBus_.publish(std::make_unique<ui::ButtonEvent>(btn));
@@ -88,24 +91,13 @@ void App::loop() {
       continue;
     }
 
-    if (currentPage_) {
-      if (currentEvent->id == EventID::FullRedraw) {
-        u8g2_.clearBuffer();
-      }
-      currentPage_->handleEvent(currentEvent.get());
-      if (currentEvent->id == EventID::FullRedraw) {
-        batteryDraw();
-        u8g2_.sendBuffer();
-      }
-    }
+    sendToPages(currentEvent.get());
   } 
 }
 
 
 bool App::handleEvent(const Event* event) {
-
   if (event->id == EventID::PageClosed) {
-  
     PageClosedEvent const* pageClosedEvent = static_cast<const PageClosedEvent*>(event);
     if (pageClosedEvent->page == pages_[PAGE_DISPENSE]) {
       activatePage(PAGE_MENU);
@@ -147,14 +139,27 @@ bool App::sendToMotor(const Event* event) {
   return false;
 }
 
+bool App::sendToPages(const Event* event) {
+  if (currentPage_) {
+    if (event->id == EventID::FullRedraw) {
+      u8g2_.clearBuffer();
+    }
+    currentPage_->handleEvent(event);
+    if (event->id == EventID::FullRedraw) {
+      batteryDraw();
+      u8g2_.sendBuffer();
+    }
+    return true;
+  }
+  return false;
+}
+
 void App::activatePage(int8_t pageIndex) {
   currentPage_ = pages_[pageIndex];
   currentController_ = controllers_[pageIndex];
   eventBus_.publish(std::make_unique<PageActivatedEvent>());
   eventBus_.publish(std::make_unique<ui::FullRedrawEvent>());
 }
-
-
 
 int8_t App::getButtonPress() {
   static unsigned long lastDebounceTime = 0;
@@ -220,6 +225,14 @@ void App::batteryDraw() {
   if (voltage_mv > 0) {
     batteryIndicator_.report(voltage_mv);
     batteryIndicator_.draw();
+  }
+}
+
+void App::checkRedrawTimer() {
+  unsigned long currentTime = millis();
+  if (currentTime - lastRedrawTime_ >= 60000) {  // 60000ms = 1 minute
+    lastRedrawTime_ = currentTime;
+    eventBus_.publish(std::make_unique<ui::FullRedrawEvent>());
   }
 }
 

@@ -26,11 +26,13 @@ private:
   bool handleEvent(const Event* event);
   bool sendToControllers(const Event* event);
   bool sendToMotor(const Event* event);
+  bool sendToPages(const Event* event);
 
   void activatePage(int8_t pageIndex);
 
   int8_t getButtonPress();
   void batteryDraw();
+  void checkRedrawTimer();
 
   U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2_;
   EventBus eventBus_;
@@ -44,4 +46,5 @@ private:
   Controller* currentController_;
   
   ui::BatteryIndicator batteryIndicator_;
+  unsigned long lastRedrawTime_;
 };
