@@ -23,6 +23,7 @@ App::App()
   , motor_{&eventBus_}
   , currentPage_{nullptr}
   , currentController_{nullptr}
+  , batteryIndicator_{&u8g2_}
 {
   // Initialize pages
   pages_[PAGE_DISPENSE] = new DispensePage(&u8g2_, &eventBus_);
@@ -93,6 +94,7 @@ void App::loop() {
       }
       currentPage_->handleEvent(currentEvent.get());
       if (currentEvent->id == EventID::FullRedraw) {
+        batteryDraw();
         u8g2_.sendBuffer();
       }
     }
@@ -211,6 +213,14 @@ int8_t App::getButtonPress() {
   }
   
   return 0; // No button pressed
+}
+
+void App::batteryDraw() {
+  int32_t voltage_mv = batteryReadVoltage();
+  if (voltage_mv > 0) {
+    batteryIndicator_.report(voltage_mv);
+    batteryIndicator_.draw();
+  }
 }
 
 

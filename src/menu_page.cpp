@@ -45,7 +45,7 @@ XMUI_MENU_BTN0("GC")
 //----
 
 MUI_FORM(3)
-XMUI_MENU_HEADER("Drop size (1-20)")
+XMUI_MENU_HEADER("Drop size")
 MUI_STYLE(2)
 MUI_XY("I0", 55, 35)
 

@@ -8,6 +8,7 @@
 #include "page.h"
 #include "controller.h"
 #include "settings.h"
+#include "ui/battery_indicator.h"
 
 class App {
   constexpr static int8_t NUM_PAGES = 3;
@@ -29,6 +30,7 @@ private:
   void activatePage(int8_t pageIndex);
 
   int8_t getButtonPress();
+  void batteryDraw();
 
   U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2_;
   EventBus eventBus_;
@@ -40,4 +42,6 @@ private:
 
   Page* currentPage_;
   Controller* currentController_;
+  
+  ui::BatteryIndicator batteryIndicator_;
 };
