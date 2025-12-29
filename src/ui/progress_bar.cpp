@@ -57,7 +57,7 @@ void ProgressBar::drawBar() {
 }
 
 void ProgressBar::drawLabel() {
-  u8g2_->setFont(XMUI_DEFAULT_FONT);
+  u8g2_->setFont(XMUI_BIG_FONT);
   int8_t fontHeight = u8g2_->getMaxCharHeight();
   u8g2_->setDrawColor(0);
   u8g2_->drawBox(x_, y_ - fontHeight, w_, fontHeight);
