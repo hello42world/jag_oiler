@@ -6,7 +6,6 @@
 #include "motor.h"
 
 #include "page.h"
-#include "controller.h"
 #include "settings.h"
 #include "ui/battery_indicator.h"
 
@@ -28,7 +27,6 @@ public:
 
 private:
   bool handleEvent(const Event* event);
-  bool sendToControllers(const Event* event);
   bool sendToMotor(const Event* event);
   void sendToPages(const Event* event);
 
@@ -44,10 +42,8 @@ private:
   Settings settings_ = {2};
 
   Page* pages_[NUM_PAGES];
-  Controller* controllers_[NUM_PAGES];
 
   Page* currentPage_;
-  Controller* currentController_;
   
   ui::BatteryIndicator batteryIndicator_;
   unsigned long lastRedrawTime_;

@@ -3,7 +3,6 @@
 #include "ui/events.h"
 
 #include "dispense_page.h"
-#include "dispense_controller.h"
 #include "menu_page.h"
 #include "menu_events.h"
 #include "prime_pump_page.h"
@@ -23,7 +22,6 @@ App::App()
   , eventBus_{}
   , motor_{&eventBus_}
   , currentPage_{nullptr}
-  , currentController_{nullptr}
   , batteryIndicator_{&u8g2_}
   , lastRedrawTime_{0}
 { 
@@ -34,14 +32,8 @@ App::App()
   pages_[PAGE_MENU] = new MenuPage(this, settings_);
   pages_[PAGE_PRIME_PUMP] = new PrimePumpPage(this);
 
-  
-  // Initialize controllers
-  controllers_[PAGE_DISPENSE] = new DispenseController(&eventBus_, settings_.dropSize);
-  controllers_[PAGE_MENU] = nullptr;
-  controllers_[PAGE_PRIME_PUMP] = nullptr;
   // Set initial page
   currentPage_ = pages_[PAGE_DISPENSE];
-  currentController_ = controllers_[PAGE_DISPENSE];
 }
 
 void App::setup() {
@@ -90,10 +82,6 @@ void App::loop() {
       continue;
     }
 
-    if (sendToControllers(currentEvent.get())) {
-      continue;
-    }
-
     sendToPages(currentEvent.get());
   } 
 }
@@ -120,22 +108,6 @@ bool App::handleEvent(const Event* event) {
   }
 
   return false; // propagate further
-}
-
-bool App::sendToControllers(const Event* event) {
-  if (event->id == EventID::Button) {
-    // Button event is only sent to the current controller
-    if (currentController_) {
-      return currentController_->handleEvent(event);
-    }
-  } else {
-    for (int8_t i = 0; i < NUM_PAGES; i++) {
-      if (controllers_[i] && controllers_[i]->handleEvent(event)) {
-        return true;
-      }
-    }
-  }
-  return false; 
 }
 
 bool App::sendToMotor(const Event* event) {
@@ -165,7 +137,6 @@ void App::sendToPages(const Event* event)
 
 void App::activatePage(int8_t pageIndex) {
   currentPage_ = pages_[pageIndex];
-  currentController_ = controllers_[pageIndex];
   eventBus_.publish(std::make_unique<PageActivatedEvent>());
   eventBus_.publish(std::make_unique<ui::FullRedrawEvent>());
 }
