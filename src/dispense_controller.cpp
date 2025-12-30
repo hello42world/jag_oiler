@@ -4,25 +4,16 @@
 #include "ui/events.h"
 #include "U8g2lib.h"
 
-
 DispenseController::DispenseController(EventBus* eventBus, int8_t dropSize)
   : Controller(eventBus)
   , dropSize_(dropSize)
 {}
 
 bool DispenseController::handleEvent(const Event* event) {
-  if (event->id == EventID::Button 
-      && static_cast<const ui::ButtonEvent*>(event)->button == U8X8_MSG_GPIO_MENU_HOME) {
-      int32_t steps = dropSize_ * Motor::TURN_STEPS / 4;
-      publishEvent(std::make_unique<MotorStartCommandEvent>(steps));
-      Serial.printf("DispenseController: Dispensing %d drops (%d steps)\n", dropSize_, steps);
-  } else if (event->id == EventID::SettingsChanged) {
+  if (event->id == EventID::SettingsChanged) {
     const SettingsChangedEvent* settingsEvent = static_cast<const SettingsChangedEvent*>(event);
     dropSize_ = settingsEvent->settings.dropSize;
     Serial.printf("DispenseController: Updated drop size to %d\n", dropSize_);
-    return false; // propagate further
-  } else {
-    return false;
   }
-  return true;
+  return false; // propagate further  
 }

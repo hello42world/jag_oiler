@@ -5,26 +5,17 @@
 #define BATTERY_INDICATOR_WIDTH 26
 #define BATTERY_INDICATOR_HEIGHT 11
 #define BATTERY_EMPTY_MV 3000
-#define BATTERY_FULL_MV 4000
+#define BATTERY_FULL_MV 4050
 
 
 namespace ui {
 
 BatteryIndicator::BatteryIndicator(U8G2* u8g2)
-  : u8g2_(u8g2), chargePercent_(0) {
+  : u8g2_(u8g2), millivolts_(0) {
 }
 
 void BatteryIndicator::report(int32_t millivolts) {
-  // Clamp voltage to valid range
-  if (millivolts < BATTERY_EMPTY_MV) {
-    millivolts = BATTERY_EMPTY_MV;
-  } else if (millivolts > BATTERY_FULL_MV) {
-    millivolts = BATTERY_FULL_MV;
-  }
-  
-  // Calculate percentage: (voltage - empty) * 100 / (full - empty)
-  int32_t range = BATTERY_FULL_MV - BATTERY_EMPTY_MV;
-  chargePercent_ = ((millivolts - BATTERY_EMPTY_MV) * 100) / range;
+  millivolts_ = millivolts;
 }
 
 void BatteryIndicator::draw() {
@@ -44,9 +35,22 @@ void BatteryIndicator::draw() {
   int16_t tipY = y + (h - tipHeight) / 2;
   u8g2_->drawBox(x + w - tipWidth, tipY, tipWidth, tipHeight);
   
+  // Calculate charge percentage from millivolts
+  int32_t range = BATTERY_FULL_MV - BATTERY_EMPTY_MV;
+
+  // Clamp voltage to valid range
+  auto millivolts = millivolts_;
+  if (millivolts < BATTERY_EMPTY_MV) {
+    millivolts = BATTERY_EMPTY_MV;
+  } else if (millivolts > BATTERY_FULL_MV) {
+    millivolts = BATTERY_FULL_MV;
+  }
+
+  int8_t chargePercent = ((millivolts - BATTERY_EMPTY_MV) * 100) / range;
+  
   // Draw charge percentage text in center
   char text[5];
-  snprintf(text, sizeof(text), "%d%", chargePercent_);
+  snprintf(text, sizeof(text), "%d%", chargePercent);
   
   u8g2_->setFont(u8g2_font_6x10_tf);
   int16_t textWidth = u8g2_->getStrWidth(text);
@@ -54,6 +58,9 @@ void BatteryIndicator::draw() {
   int16_t textY = y + h - 2;
   
   u8g2_->drawStr(textX, textY, text);
+
+  sniprintf(text, sizeof(text), "%d", millivolts_);
+  u8g2_->drawStr(0, textY, text);
 }
 
 } // namespace ui

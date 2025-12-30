@@ -5,6 +5,7 @@
 #include "dispense_page.h"
 #include "dispense_controller.h"
 #include "menu_page.h"
+#include "menu_events.h"
 #include "prime_pump_page.h"
 #include "battery.h"
 
@@ -25,9 +26,11 @@ App::App()
   , currentController_{nullptr}
   , batteryIndicator_{&u8g2_}
   , lastRedrawTime_{0}
-{
+{ 
+  // Load settings here
+
   // Initialize pages
-  pages_[PAGE_DISPENSE] = new DispensePage(&u8g2_, &eventBus_);
+  pages_[PAGE_DISPENSE] = new DispensePage(&u8g2_, &eventBus_, settings_.dropSize);
   pages_[PAGE_MENU] = new MenuPage(&u8g2_, &eventBus_, settings_);
   pages_[PAGE_PRIME_PUMP] = new PrimePumpPage(&u8g2_, &eventBus_);
 
@@ -111,9 +114,12 @@ bool App::handleEvent(const Event* event) {
       activatePage(PAGE_MENU);
     }
     return true;
+  } else if (event->id == EventID::SettingsChanged) {
+    const SettingsChangedEvent* settingsEvent = static_cast<const SettingsChangedEvent*>(event);
+    settings_ = settingsEvent->settings;
   }
 
-  return false;
+  return false; // propagate further
 }
 
 bool App::sendToControllers(const Event* event) {
@@ -139,19 +145,16 @@ bool App::sendToMotor(const Event* event) {
   return false;
 }
 
-bool App::sendToPages(const Event* event) {
-  if (currentPage_) {
-    if (event->id == EventID::FullRedraw) {
-      u8g2_.clearBuffer();
-    }
+void App::sendToPages(const Event* event) 
+{
+  if (event->id == EventID::FullRedraw) {
+    u8g2_.clearBuffer();
     currentPage_->handleEvent(event);
-    if (event->id == EventID::FullRedraw) {
-      batteryDraw();
-      u8g2_.sendBuffer();
-    }
-    return true;
+    batteryDraw();
+    u8g2_.sendBuffer();
+  } else {  
+    currentPage_->handleEvent(event);
   }
-  return false;
 }
 
 void App::activatePage(int8_t pageIndex) {
@@ -223,6 +226,7 @@ int8_t App::getButtonPress() {
 void App::batteryDraw() {
   int32_t voltage_mv = batteryReadVoltage();
   if (voltage_mv > 0) {
+    Serial.printf("Battery voltage: %d mV\n", voltage_mv);
     batteryIndicator_.report(voltage_mv);
     batteryIndicator_.draw();
   }
@@ -230,7 +234,7 @@ void App::batteryDraw() {
 
 void App::checkRedrawTimer() {
   unsigned long currentTime = millis();
-  if (currentTime - lastRedrawTime_ >= 60000) {  // 60000ms = 1 minute
+  if (currentTime - lastRedrawTime_ >= 60 * 1000) { 
     lastRedrawTime_ = currentTime;
     eventBus_.publish(std::make_unique<ui::FullRedrawEvent>());
   }

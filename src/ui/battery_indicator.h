@@ -15,7 +15,7 @@ public:
 
 private:
   U8G2* u8g2_;
-  int8_t chargePercent_;
+  int32_t millivolts_;
 };
 
 } // namespace ui

@@ -26,7 +26,7 @@ private:
   bool handleEvent(const Event* event);
   bool sendToControllers(const Event* event);
   bool sendToMotor(const Event* event);
-  bool sendToPages(const Event* event);
+  void sendToPages(const Event* event);
 
   void activatePage(int8_t pageIndex);
 
