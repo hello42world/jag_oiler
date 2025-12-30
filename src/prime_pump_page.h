@@ -9,7 +9,7 @@ class PrimePumpPage : public Page {
     Flushing
   };
 public:
-  PrimePumpPage(U8G2* u8g2, EventBus* eventBus);
+  PrimePumpPage(PageManager* pageManager);
   bool handleEvent(const Event* event) override;
 
 private:

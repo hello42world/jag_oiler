@@ -5,9 +5,9 @@
 #include "battery.h"
 #include "motor.h"
 
-DispensePage::DispensePage(U8G2* u8g2, EventBus* eventBus, int8_t dropSize)
-  : Page(u8g2, eventBus)
-  , progressBar_(u8g2, "Ready", 10, 30, 108, 15)
+DispensePage::DispensePage(PageManager* pageManager, int8_t dropSize)
+  : Page(pageManager)
+  , progressBar_(pageManager->u8g2(), "Ready", 10, 30, 108, 15)
   , dropSize_(dropSize) {
 }
 
@@ -41,9 +41,9 @@ bool DispensePage::handleEvent(const Event* event) {
 }
 
 void DispensePage::drawInfo() {
-  u8g2_->setFont(XMUI_DEFAULT_FONT);
+  pageManager_->u8g2()->setFont(XMUI_DEFAULT_FONT);
   char buffer[32];
   snprintf(buffer, sizeof(buffer), "DS:%d | Foo:0", dropSize_);
-  int16_t y = u8g2_->getDisplayHeight();
-  u8g2_->drawStr(0, y, buffer);
+  int16_t y = pageManager_->u8g2()->getDisplayHeight() - 2;
+  pageManager_->u8g2()->drawStr(0, y, buffer);
 }

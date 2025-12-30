@@ -4,10 +4,10 @@
 #include "motor.h"
 #include "motor_events.h"
 
-PrimePumpPage::PrimePumpPage(U8G2* u8g2, EventBus* eventBus)
-  : Page(u8g2, eventBus)
+PrimePumpPage::PrimePumpPage(PageManager* pageManager)
+  : Page(pageManager)
   , state_(State::Ready)
-  , buttonHint_(u8g2, "Flush", "Stop", "Prime")
+  , buttonHint_(pageManager->u8g2(), "Flush", "", "Prime")
 {
 }
 
@@ -54,8 +54,8 @@ void PrimePumpPage::draw() {
 }
 
 void PrimePumpPage::printInCenter(const char* str) {
-  u8g2_->setFont(XMUI_BIG_FONT);
-  u8g2_uint_t x = (u8g2_->getWidth() - u8g2_->getStrWidth(str)) / 2;
-  u8g2_->drawStr(x, (u8g2_->getHeight() + 10) / 2, str);
+  pageManager_->u8g2()->setFont(XMUI_BIG_FONT);
+  u8g2_uint_t x = (pageManager_->u8g2()->getWidth() - pageManager_->u8g2()->getStrWidth(str)) / 2;
+  pageManager_->u8g2()->drawStr(x, (pageManager_->u8g2()->getHeight() + 10) / 2, str);
 }
 

@@ -10,7 +10,7 @@
 #include "settings.h"
 #include "ui/battery_indicator.h"
 
-class App {
+class App : public PageManager {
   constexpr static int8_t NUM_PAGES = 3;
   constexpr static int8_t PAGE_DISPENSE = 0;
   constexpr static int8_t PAGE_MENU = 1;
@@ -21,6 +21,10 @@ public:
   void setup();
   void loop();
 
+  // PageManager interface
+  U8G2* u8g2() override;
+  EventBus* eventBus() override;
+  bool isActive(Page* page) override;
 
 private:
   bool handleEvent(const Event* event);

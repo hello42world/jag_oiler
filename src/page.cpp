@@ -3,8 +3,13 @@
 //
 // Page
 //
+
+Page::Page(PageManager* pageManager)
+  : pageManager_(pageManager) {
+}
+
 void Page::publishEvent(std::unique_ptr<Event> event) {
-  eventBus_->publish(std::move(event));
+   pageManager_->eventBus()->publish(std::move(event));
 }
 
 bool Page::handleEvent(const Event* event) {

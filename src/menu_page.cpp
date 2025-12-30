@@ -55,8 +55,8 @@ MUI_XY("I0", 55, 35)
 
 
 
-MenuPage::MenuPage(U8G2* u8g2, EventBus* eventBus, const Settings& settings) 
-  : Page(u8g2, eventBus)
+MenuPage::MenuPage(PageManager* pageManager, const Settings& settings) 
+  : Page(pageManager)
   , settings_(settings)
   , stDropSize_{&settings_.dropSize, 1, MAX_DROP_SIZE}
 {
@@ -76,7 +76,7 @@ MenuPage::MenuPage(U8G2* u8g2, EventBus* eventBus, const Settings& settings)
   };
 
 
-  mui_.begin(*u8g2, fds_data, muifList_.data(), muifList_.size());
+  mui_.begin(*pageManager->u8g2(), fds_data, muifList_.data(), muifList_.size());
 }
 
 bool MenuPage::handleEvent(const Event* event) {

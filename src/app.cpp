@@ -30,9 +30,9 @@ App::App()
   // Load settings here
 
   // Initialize pages
-  pages_[PAGE_DISPENSE] = new DispensePage(&u8g2_, &eventBus_, settings_.dropSize);
-  pages_[PAGE_MENU] = new MenuPage(&u8g2_, &eventBus_, settings_);
-  pages_[PAGE_PRIME_PUMP] = new PrimePumpPage(&u8g2_, &eventBus_);
+  pages_[PAGE_DISPENSE] = new DispensePage(this, settings_.dropSize);
+  pages_[PAGE_MENU] = new MenuPage(this, settings_);
+  pages_[PAGE_PRIME_PUMP] = new PrimePumpPage(this);
 
   
   // Initialize controllers
@@ -238,6 +238,18 @@ void App::checkRedrawTimer() {
     lastRedrawTime_ = currentTime;
     eventBus_.publish(std::make_unique<ui::FullRedrawEvent>());
   }
+}
+
+U8G2* App::u8g2() {
+  return &u8g2_;
+}
+
+EventBus* App::eventBus() {
+  return &eventBus_;
+}
+
+bool App::isActive(Page* page) {
+  return page == currentPage_;
 }
 
 

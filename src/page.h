@@ -2,18 +2,26 @@
 #include "event.h"
 #include <U8g2lib.h>
 
+class Page;
+
+struct PageManager {
+  virtual U8G2* u8g2() = 0;
+  virtual EventBus* eventBus() = 0;
+  virtual bool isActive(Page* page) = 0;
+  virtual ~PageManager() = default;
+};
+
 class Page {
 public:
-  Page(U8G2* u8g2, EventBus* eventBus) 
-    : u8g2_(u8g2), eventBus_(eventBus) {}
-  
+  Page(PageManager* pageManager);
+
   virtual void loop() {};
   virtual bool handleEvent(const Event* event);
 protected:
   void publishEvent(std::unique_ptr<Event> event);
-  U8G2 *u8g2_;
+  
+  PageManager* pageManager_;
 private:
-  EventBus *eventBus_;
 };
 
 struct PageActivatedEvent : public Event {
