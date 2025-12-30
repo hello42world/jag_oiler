@@ -152,8 +152,14 @@ void App::sendToPages(const Event* event)
     currentPage_->handleEvent(event);
     batteryDraw();
     u8g2_.sendBuffer();
-  } else {  
+  } else if (event->id == EventID::Button 
+      || event->id == EventID::PageActivated 
+      || event->id == EventID::PageClosed) { 
     currentPage_->handleEvent(event);
+  } else {
+    for (int8_t i = 0; i < NUM_PAGES; i++) {
+      pages_[i]->handleEvent(event);
+    }
   }
 }
 

@@ -1,5 +1,6 @@
 #include "dispense_page.h"
 #include "motor_events.h"
+#include "menu_events.h"
 #include "ui/events.h"
 #include "ui/xmui.h"
 #include "battery.h"
@@ -15,7 +16,7 @@ bool DispensePage::handleEvent(const Event* event) {
   if (event->id == EventID::FullRedraw) {
     progressBar_.draw();
     drawInfo();
-  } else if (event->id == EventID::MotorProgress) {
+  } else if (event->id == EventID::MotorProgress && pageManager_->isActive(this)) {
     auto progress = static_cast<const MotorProgressEvent*>(event)->progressPercent;
     progressBar_.setProgress(progress);
     
@@ -25,6 +26,9 @@ bool DispensePage::handleEvent(const Event* event) {
       progressBar_.setLabel("Ready");
       progressBar_.setProgress(0);
     }
+  } else if (event->id == EventID::SettingsChanged) {
+    const SettingsChangedEvent* settingsEvent = static_cast<const SettingsChangedEvent*>(event);
+    dropSize_ = settingsEvent->settings.dropSize;
   } else if (event->id == EventID::Button) {
     const auto* buttonEvent = static_cast<const ui::ButtonEvent*>(event);
     if (buttonEvent->button == U8X8_MSG_GPIO_MENU_SELECT) {

@@ -7,7 +7,7 @@
 PrimePumpPage::PrimePumpPage(PageManager* pageManager)
   : Page(pageManager)
   , state_(State::Ready)
-  , buttonHint_(pageManager->u8g2(), "Flush", "", "Prime")
+  , buttonHint_(pageManager->u8g2(), "Flush", "Stop", "Prime")
 {
 }
 
@@ -26,7 +26,7 @@ bool PrimePumpPage::handleEvent(const Event* event) {
     } else if (buttonEvent->button == U8X8_MSG_GPIO_MENU_PREV) {
       publishEvent(std::make_unique<MotorStartCommandEvent>(-Motor::TURN_STEPS * 10));
     }
-  } else if (event->id == EventID::MotorProgress) {
+  } else if (event->id == EventID::MotorProgress && pageManager_->isActive(this)) {
     auto progressEvt = static_cast<const MotorProgressEvent*>(event);
     if (progressEvt->progressPercent == 0) {
       state_ = progressEvt->forward ? State::Priming : State::Flushing;
