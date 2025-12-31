@@ -59,8 +59,8 @@ void BatteryIndicator::draw() {
   
   u8g2_->drawStr(textX, textY, text);
 
-  sniprintf(text, sizeof(text), "%d", millivolts_);
-  u8g2_->drawStr(0, textY, text);
+  //sniprintf(text, sizeof(text), "%d", millivolts_);
+  //u8g2_->drawStr(0, textY, text);
 }
 
 } // namespace ui
