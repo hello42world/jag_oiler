@@ -12,4 +12,6 @@ private:
 
   ui::ProgressBar progressBar_;
   int8_t dropSize_;
+  int32_t dropsDispensed_ = 0;
+  int32_t dropUnitsDispensed_ = 0;
 };

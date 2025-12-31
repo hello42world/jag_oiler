@@ -25,6 +25,11 @@ bool DispensePage::handleEvent(const Event* event) {
     } else if (progress == 100) {
       progressBar_.setLabel("Ready");
       progressBar_.setProgress(0);
+
+      dropsDispensed_ += 1;
+      dropUnitsDispensed_ += dropSize_;
+      
+      publishEvent(std::make_unique<ui::FullRedrawEvent>());
     }
   } else if (event->id == EventID::SettingsChanged) {
     const SettingsChangedEvent* settingsEvent = static_cast<const SettingsChangedEvent*>(event);
@@ -47,7 +52,7 @@ bool DispensePage::handleEvent(const Event* event) {
 void DispensePage::drawInfo() {
   pageManager_->u8g2()->setFont(XMUI_DEFAULT_FONT);
   char buffer[32];
-  snprintf(buffer, sizeof(buffer), "DS:%d | Foo:0", dropSize_);
-  int16_t y = pageManager_->u8g2()->getDisplayHeight() - 2;
+  snprintf(buffer, sizeof(buffer), "DS:%d | Cnt:%d/%d", dropSize_, dropsDispensed_, dropUnitsDispensed_);
+  int16_t y = pageManager_->u8g2()->getDisplayHeight() - 0;
   pageManager_->u8g2()->drawStr(0, y, buffer);
 }

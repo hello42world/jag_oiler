@@ -21,6 +21,7 @@ Motor::Motor(EventBus* eventBus)
   stepper_.setSpeed(300);
   stepper_.disableOutputs();
   // stepper_.setEnablePin(PIN_EN);
+  stepper_.run();
 }
 
 void Motor::beginPortion(int32_t steps) {
