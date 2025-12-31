@@ -39,7 +39,7 @@ private:
   U8G2_SSD1306_128X64_NONAME_F_HW_I2C u8g2_;
   EventBus eventBus_;
   Motor motor_;
-  Settings settings_ = {2};
+  Settings settings_ = {1};
   Page* pages_[NUM_PAGES];
   Page* currentPage_;
   ui::BatteryIndicator batteryIndicator_;

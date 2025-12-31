@@ -3,7 +3,7 @@
 #include "ui/events.h"
 
 
-#define MAX_DROP_SIZE 20
+#define MAX_DROP_SIZE 10
 
 #define FORM_MAIN_MENU        0
 #define FORM_SETTINGS_MENU    1

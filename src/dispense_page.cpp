@@ -6,6 +6,8 @@
 #include "battery.h"
 #include "motor.h"
 
+#define DROP_UNIT_STEPS (Motor::TURN_STEPS / 2)
+
 DispensePage::DispensePage(PageManager* pageManager, int8_t dropSize)
   : Page(pageManager)
   , progressBar_(pageManager->u8g2(), "Ready", 10, 30, 108, 15)
@@ -39,7 +41,7 @@ bool DispensePage::handleEvent(const Event* event) {
     if (buttonEvent->button == U8X8_MSG_GPIO_MENU_SELECT) {
       publishEvent(std::make_unique<PageClosedEvent>(this));
     } else if (buttonEvent->button == U8X8_MSG_GPIO_MENU_HOME) {
-      int32_t steps = dropSize_ * Motor::TURN_STEPS / 4;
+      int32_t steps = dropSize_ * DROP_UNIT_STEPS;
       publishEvent(std::make_unique<MotorStartCommandEvent>(steps));
       Serial.printf("DispensePage: Dispensing %d drops (%d steps)\n", dropSize_, steps);
     }
