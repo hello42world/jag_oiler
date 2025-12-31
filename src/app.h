@@ -3,10 +3,11 @@
 #include <U8g2lib.h>
 #include <MUIU8g2.h>
 #include <string>
-#include "motor.h"
 
+#include "motor.h"
 #include "page.h"
 #include "settings.h"
+#include "nv_storage.h"
 #include "ui/battery_indicator.h"
 
 class App : public PageManager {
@@ -17,7 +18,6 @@ class App : public PageManager {
 public: 
   App();
 
-  void setup();
   void loop();
 
   // PageManager interface
@@ -40,11 +40,9 @@ private:
   EventBus eventBus_;
   Motor motor_;
   Settings settings_ = {2};
-
   Page* pages_[NUM_PAGES];
-
   Page* currentPage_;
-  
   ui::BatteryIndicator batteryIndicator_;
   unsigned long lastRedrawTime_;
+  NVStorage nvStorage_;
 };

@@ -25,7 +25,11 @@ App::App()
   , batteryIndicator_{&u8g2_}
   , lastRedrawTime_{0}
 { 
-  // Load settings here
+  // Load settings
+  nvStorage_.setup();
+  int32_t dropSize = 0;
+  nvStorage_.get("dropSize", &dropSize, settings_.dropSize);
+  settings_.dropSize = static_cast<int8_t>(dropSize);
 
   // Initialize pages
   pages_[PAGE_DISPENSE] = new DispensePage(this, settings_.dropSize);
@@ -34,9 +38,8 @@ App::App()
 
   // Set initial page
   currentPage_ = pages_[PAGE_DISPENSE];
-}
 
-void App::setup() {
+  // Setup pins
   pinMode(PIN_BTN_PREV, INPUT_PULLUP);
   pinMode(PIN_BTN_SEL, INPUT_PULLUP);
   pinMode(PIN_BTN_NEXT, INPUT_PULLUP);
@@ -57,6 +60,7 @@ void App::setup() {
 
   eventBus_.publish(std::make_unique<ui::FullRedrawEvent>());
 }
+
 
 void App::loop() {
   checkRedrawTimer();
@@ -105,6 +109,7 @@ bool App::handleEvent(const Event* event) {
   } else if (event->id == EventID::SettingsChanged) {
     const SettingsChangedEvent* settingsEvent = static_cast<const SettingsChangedEvent*>(event);
     settings_ = settingsEvent->settings;
+    nvStorage_.set("dropSize", settings_.dropSize);
   }
 
   return false; // propagate further
