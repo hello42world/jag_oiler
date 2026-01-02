@@ -14,7 +14,7 @@ fi
 
 # Check for uncommitted changes
 if ! git diff-index --quiet HEAD --; then
-  echo -n "-dirty"
+  echo -n "-d"
 fi
 
 echo ""

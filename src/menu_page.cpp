@@ -1,6 +1,8 @@
 #include "menu_page.h"
 #include "menu_events.h"
 #include "ui/events.h"
+#include "battery.h"
+#include "version.h"
 
 
 #define MAX_DROP_SIZE 10
@@ -28,9 +30,11 @@ MUI_FORM(1)
 XMUI_MENU_HEADER("Settings")
 
 MUI_DATA("GP", 
-  MUI_3 "Drop size"
+  MUI_3 "Drop size|"
+  MUI_4 "Status"
 )
 XMUI_MENU_BTN0("GC")
+XMUI_MENU_BTN1("GC")
 
 //XMUI_MENU_BTN1("ID")
 
@@ -49,11 +53,15 @@ XMUI_MENU_HEADER("Drop size")
 MUI_STYLE(2)
 MUI_XY("I0", 55, 35)
 
-
+MUI_FORM(4)
+XMUI_MENU_HEADER("Status")
+MUI_XY("BV", 3, 31)
+MUI_XY("FV", 3, 51)
 
 ;  // fds_data
 
-
+uint8_t mui_draw_battv(mui_t *ui, uint8_t msg);
+uint8_t mui_draw_fw(mui_t *ui, uint8_t msg);
 
 MenuPage::MenuPage(PageManager* pageManager, const Settings& settings) 
   : Page(pageManager)
@@ -73,6 +81,9 @@ MenuPage::MenuPage(PageManager* pageManager, const Settings& settings)
 
     // XMUIF_DYNAMIC_MENU("ID", settingsMenu_),
     XMUIF_INT_VAR("I0", &stDropSize_),
+
+    MUIF_RO("BV", mui_draw_battv),
+    MUIF_RO("FV", mui_draw_fw)
   };
 
 
@@ -133,4 +144,24 @@ void MenuPage::handleBtnSelect() {
     // Enter edit mode immediately.
     mui_.sendSelect();
   }
+}
+
+uint8_t mui_draw_battv(mui_t *ui, uint8_t msg) {
+  if ( msg == MUIF_MSG_DRAW ) {
+    u8g2_t* u8g2 = (u8g2_t*)(ui->graphics_data);
+    char buf[16];
+    snprintf(buf, sizeof(buf), "Batt: %dmv", batteryReadVoltage());
+    u8g2_DrawStr(u8g2, mui_get_x(ui), mui_get_y(ui), buf);
+  }
+  return 0;
+}
+
+uint8_t mui_draw_fw(mui_t *ui, uint8_t msg) {
+  if ( msg == MUIF_MSG_DRAW ) {
+    u8g2_t* u8g2 = (u8g2_t*)(ui->graphics_data);
+    char buf[32];
+    snprintf(buf, sizeof(buf), "FW: %s", VERSION);
+    u8g2_DrawStr(u8g2, mui_get_x(ui), mui_get_y(ui), buf);
+  }
+  return 0;
 }
