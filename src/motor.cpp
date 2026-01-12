@@ -19,9 +19,8 @@ Motor::Motor(EventBus* eventBus)
   stepper_.setMaxSpeed(1000);    
   stepper_.setAcceleration(15000);  
   stepper_.setSpeed(300);
+  stepper_.setCurrentPosition(0);
   stepper_.disableOutputs();
-  // stepper_.setEnablePin(PIN_EN);
-  stepper_.run();
 }
 
 void Motor::beginPortion(int32_t steps) {
