@@ -1,5 +1,15 @@
 
-<img src="docs/jag_oiler1.jpg" width="400" alt="Jag Oiler">
+<table align="center">
+	<tr>
+		<td align="center" valign="top">
+			<a href="docs/jag_oiler1.jpg"><img src="docs/jag_oiler1.jpg" width="400" alt="Jag Oiler Photo"></a>
+		</td>
+		<td align="center" valign="top">
+			<a href="docs/jag_oiler.gif"><img src="docs/jag_oiler.gif" width="360" alt="Jag Oiler GIF"></a><br>
+			<a href="docs/jag_oiler_zoom.gif"><img src="docs/jag_oiler_zoom.gif" width="360" alt="Jag Oiler Zoom GIF"></a>
+		</td>
+	</tr>
+</table>
 
 # What is it?
 
