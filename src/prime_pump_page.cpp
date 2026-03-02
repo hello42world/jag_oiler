@@ -22,9 +22,9 @@ bool PrimePumpPage::handleEvent(const Event* event) {
       publishEvent(std::make_unique<MotorStopCommandEvent>());
       publishEvent(std::make_unique<PageClosedEvent>(this));
     } else if (buttonEvent->button == U8X8_MSG_GPIO_MENU_NEXT) {
-      publishEvent(std::make_unique<MotorStartCommandEvent>(Motor::TURN_STEPS * 10));
+      publishEvent(std::make_unique<MotorStartCommandEvent>(Motor::TURN_STEPS * 20));
     } else if (buttonEvent->button == U8X8_MSG_GPIO_MENU_PREV) {
-      publishEvent(std::make_unique<MotorStartCommandEvent>(-Motor::TURN_STEPS * 10));
+      publishEvent(std::make_unique<MotorStartCommandEvent>(-Motor::TURN_STEPS * 20));
     }
   } else if (event->id == EventID::MotorProgress && pageManager_->isActive(this)) {
     auto progressEvt = static_cast<const MotorProgressEvent*>(event);

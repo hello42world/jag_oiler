@@ -6,8 +6,6 @@
 #define PIN_BIN1 7
 #define PIN_BIN2 10
 
-// #define PIN_EN 10
-
 const int progressStep = 10;
 
 Motor::Motor(EventBus* eventBus) 
@@ -16,9 +14,8 @@ Motor::Motor(EventBus* eventBus)
   , lastState_(IDLE)
 {
   
-  stepper_.setMaxSpeed(1000);    
-  stepper_.setAcceleration(15000);  
-  stepper_.setSpeed(300);
+  stepper_.setMaxSpeed(1500);    
+  stepper_.setAcceleration(25000);  
   stepper_.setCurrentPosition(0);
   stepper_.disableOutputs();
 }
